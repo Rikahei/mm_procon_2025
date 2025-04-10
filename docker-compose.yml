@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .  # Use the current directory (where Dockerfile is)
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"  # Map port 5173 on your Mac to 5173 in the container
+    volumes:
+      - ./app/frontend:/app/frontend
+      - /app/frontend/node_modules
+    environment:
+      - WATCHPACK_POLLING=true  # Ensure hot reloading works with volume mounts
+    tty: true  # Keep the container running interactively
