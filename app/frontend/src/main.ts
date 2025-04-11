@@ -1,5 +1,7 @@
-import { Application } from "pixi.js"; // Graphics is no longer directly needed here
-import { createRandomStars } from "./background-stars"; // Import the new function
+import { Application } from "pixi.js";
+import { player } from "./textalive-player";
+import { createRandomStars } from "./background-stars";
+import "./style.css";
 
 // Create a new Stage.
 const createApp = async () => {
@@ -23,7 +25,8 @@ const main = async () => {
   // Add the returned graphics object to the stage
   app.stage.addChild(dotsGraphics);
 
-};
-
+  // load text-alive player
+  await player;
+}
 // Run the main function
 main();

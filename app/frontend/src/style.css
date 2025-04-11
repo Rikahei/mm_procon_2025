@@ -1,96 +1,177 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* 背景 / Background */
 body {
+  background: #c33c68;
+  background-image: linear-gradient(0deg, #09002a 0, #05017d 50%, #033673 100%);
+  background-attachment: fixed;
+  background-size: 100vw 100vh;
   margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+canvas {
+  display: block;
+}
+
+#overlay {
+  user-select: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  align-items: center;
+  background: #0006;
+  color: #fffc;
+  z-index: 5;
 }
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+#overlay.disabled {
+  display: none;
 }
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+#overlay > p {
+  width: 100vw;
+  font-size: 40px;
   text-align: center;
 }
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #3178c6aa);
+#overlay > p > span {
+  display: inline-block;
+  padding-right: 20px;
+  margin-right: 20px;
+  border-right: 1px solid #fff6;
 }
 
-.card {
-  padding: 2em;
+/* フッターと音源 / Header and audio source */
+#header,
+#media {
+  /* ページ左に固定 / Stick to the page left */
+  position: fixed;
+  left: 0;
+
+  /* 背景色と文字色 / Background and text color */
+  background: #000c;
+  color: #fff;
+
+  z-index: 1;
 }
 
-.read-the-docs {
-  color: #888;
+/* フッター / Footer */
+#header {
+  /* 上寄せ / Top-aligned */
+  top: 20px;
+
+  /* 少し余裕を持たせる / Box with a small padding */
+  padding: 10px 16px;
+
+  /* フォントサイズ小さめ、太め / Small but bold typography */
+  font-size: 10.5px;
+  font-weight: bold;
+
+  /* 子要素を横に並べて配置 / Align child content to the right */
+  display: flex;
+
+  /* 子要素は縦に中央揃え / Vertically middle-aligned */
+  align-items: center;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+/* 再生ボタン / Play button */
+#control {
+  font-size: 21px;
+  padding-right: 10px;
+  border-right: 1px solid #fff9;
 }
-button:hover {
-  border-color: #646cff;
+#control.disabled {
+  display: none;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+#control a {
+  color: rgb(99 208 226);
+  text-decoration: none;
+}
+#control a.disabled {
+  opacity: 0.3;
+}
+#control a:hover {
+  color: rgb(255 148 56);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* アーティストと楽曲の情報 / Artist and song info */
+#meta {
+  padding-left: 10px;
+}
+#meta span {
+  font-weight: normal;
+}
+
+/* 音源 / Audio source */
+#media {
+  /* 下寄せ / Bottom-aligned */
+  bottom: 10px;
+}
+#media.disabled > .textalive-media-wrapper {
+  width: 0;
+  height: 0;
+}
+
+/**
+ * ビート情報が取れるようになったらビートバーを表示
+ * Show beat bar when beat information becomes available
+ */
+@keyframes activateBeatBar {
+  0% {
+    opacity: 0;
   }
-  a:hover {
-    color: #747bff;
+  100% {
+    width: 100%;
+    opacity: 1;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+/**
+ * ビート毎に右に広げてフェードアウト
+ * Make beat bar span to the right and then fade out
+ */
+@keyframes showBeatBar {
+  0% {
+    width: 0;
+    opacity: 1;
   }
+  50% {
+    width: 100%;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0;
+  }
+}
+
+/**
+ * 歌詞が下からせり出してくる
+ * Make lyrics text appear from the bottom
+ */
+@keyframes showLyrics {
+  0% {
+    transform: translate3d(0, 100%, 0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+#seekbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: rgba(255 255 255 / 40%);
+}
+
+#seekbar > div {
+  width: 0;
+  height: 100%;
+  background: rgba(255 255 255 / 80%);
 }

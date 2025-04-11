@@ -13,6 +13,8 @@
     "vite": "^6.2.0"
   },
   "dependencies": {
-    "pixi.js": "^8.9.1"
+    "axios": "^1.8.4",
+    "pixi.js": "^8.9.1",
+    "textalive-app-api": "^0.4.0"
   }
 }

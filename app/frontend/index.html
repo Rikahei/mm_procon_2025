@@ -3,11 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500&amp;display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/regular.min.css"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + TS</title>
   </head>
   <body>
     <div id="app"></div>
+    <!-- オーバーレイ / Overlay -->
+    <div id="overlay">
+      <p><span class="far">&#xf254;</span>now loading...</p>
+    </div>
+    <!-- ヘッダ / Header -->
+    <div id="header">
+      <!-- 再生コントロール / Playback control -->
+      <div id="control" class="far">
+        <a href="#" id="play" class="disabled">&#xf144;</a>
+        <a href="#" id="stop" class="disabled">&#xf28d;</a>
+      </div>
+      <!-- アーティストと楽曲の情報 / Artist and song info -->
+      <div id="meta">
+        <div id="artist">artist: <span>-</span></div>
+        <div id="song">song: <span>-</span></div>
+      </div>
+    </div>
+    <!-- 音源 / Audio souce -->
+    <div id="media"></div>
+    <!-- シークバー -->
+    <div id="seekbar">
+      <div></div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
