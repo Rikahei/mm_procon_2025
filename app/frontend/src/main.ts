@@ -1,21 +1,29 @@
-import { Application, Assets, Sprite } from "pixi.js";
+import { Application } from "pixi.js"; // Graphics is no longer directly needed here
+import { createRandomStars } from "./background-stars"; // Import the new function
 
 // Create a new Stage.
 const createApp = async () => {
-
   const app = new Application();
-
-  await app.init({ background: '#cccccc', resizeTo: window });
-
+  await app.init({ background: '#000000', resizeTo: window });
   document.body.appendChild(app.canvas);
-  return app
-}
+  return app;
+};
 
 const main = async () => {
-  const app = await createApp()
-  const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
-  const sprite = new Sprite(texture)
-  app.stage.addChild(sprite)
-}
+  // Create the PixiJS application
+  const app = await createApp();
 
-main()
+  // --- Use the imported function ---
+  const dotRadius: number = 2;
+  const numberOfDots: number = 20;
+
+  // Call the function from dots.ts to get the graphics object
+  const dotsGraphics = createRandomStars(app, numberOfDots, dotRadius);
+
+  // Add the returned graphics object to the stage
+  app.stage.addChild(dotsGraphics);
+
+};
+
+// Run the main function
+main();
