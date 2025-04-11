@@ -6,7 +6,8 @@ import "./style.css";
 // Create a new Stage.
 const createApp = async () => {
   const app = new Application();
-  await app.init({ background: '#000000', resizeTo: window });
+  const element = document.querySelector("#myCanvas");
+  await app.init({ background: '#000000', canvas: element, resizeTo: element});
   document.body.appendChild(app.canvas);
   return app;
 };
