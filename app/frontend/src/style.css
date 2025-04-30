@@ -8,17 +8,6 @@ body {
   padding: 0;
 }
 
-#myCanvas {
-  width: calc(100vw - 20px);
-  height: calc(100vh - 20px);
-  margin: 10px;
-}
-canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
 #overlay {
   user-select: none;
   position: fixed;

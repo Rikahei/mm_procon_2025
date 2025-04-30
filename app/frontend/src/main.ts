@@ -1,33 +1,27 @@
-import { Application } from "pixi.js";
 import { player } from "./textalive-player";
-import { createRandomStars } from "./background-stars";
 import "./style.css";
+import * as THREE from 'three';
 
-// Create a new Stage.
-const createApp = async () => {
-  const app = new Application();
-  const element = document.querySelector("#myCanvas");
-  await app.init({ background: '#000000', canvas: element, resizeTo: element});
-  document.body.appendChild(app.canvas);
-  return app;
-};
-
-const main = async () => {
-  // Create the PixiJS application
-  const app = await createApp();
-
-  // --- Use the imported function ---
-  const dotRadius: number = 2;
-  const numberOfDots: number = 20;
-
-  // Call the function from dots.ts to get the graphics object
-  const dotsGraphics = createRandomStars(app, numberOfDots, dotRadius);
-
-  // Add the returned graphics object to the stage
-  app.stage.addChild(dotsGraphics);
-
-  // load text-alive player
-  await player;
+function animate() {
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+  renderer.render( scene, camera );
 }
-// Run the main function
-main();
+
+// load text-alive player
+await player;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setAnimationLoop( animate );
+document.body.appendChild( renderer.domElement );
+
+const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+const cube = new THREE.Mesh( geometry, material );
+scene.add( cube );
+
+camera.position.z = 5;
+
