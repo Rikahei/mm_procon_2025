@@ -11,10 +11,10 @@ async function main (){
 
 	const fov = 120;
 	const aspect = 2; // the canvas default
-	const near = 0.1;
-	const far = 5;
+	const near = 1;
+	const far = 10;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.z = 2;
+	camera.position.z = 10;
 
 	const scene = new THREE.Scene();
 
@@ -28,28 +28,31 @@ async function main (){
 
 	}
 
-	const boxWidth = 1;
-	const boxHeight = 1;
-	const boxDepth = 1;
-	const geometry = new THREE.BoxGeometry( boxWidth, boxHeight, boxDepth );
+	const radiusTop = 22;
+	const radiusBottom = 22;  
+	const height = 6;  
+	const radialSegments = 60;
 
-	function makeInstance( geometry, color, x ) {
+	const geometry = new THREE.CylinderGeometry(
+		radiusTop, radiusBottom, height, radialSegments );
+
+	function makeInstance( geometry, color ) {
 
 		const material = new THREE.MeshPhongMaterial( { color } );
 
-		const cube = new THREE.Mesh( geometry, material );
-		scene.add( cube );
+		const cylinder = new THREE.Mesh( geometry, material );
+		scene.add( cylinder );
 
-		cube.position.x = x;
+		cylinder.position.x = 0;
+		cylinder.position.y = -30;
+		cylinder.rotation.x = Math.PI / 2;
 
-		return cube;
+		return cylinder;
 
 	}
 
-	const cubes = [
-		// makeInstance( geometry, 0x44aa88, 0 ),
-		makeInstance( geometry, 0x8844aa, - 2 ),
-		makeInstance( geometry, 0xaa8844, 2 ),
+	const cylinders = [
+		makeInstance( geometry, 0x44aa88 ),
 	];
 
 	function resizeRendererToDisplaySize( renderer ) {
@@ -71,7 +74,7 @@ async function main (){
 
 	function render( time ) {
 
-		time *= 0.0005;
+		time *= 0.0001;
 
 		if ( resizeRendererToDisplaySize( renderer ) ) {
 
@@ -81,11 +84,11 @@ async function main (){
 
 		}
 
-		cubes.forEach( ( cube, ndx ) => {
+		cylinders.forEach( ( cylinder, ndx ) => {
 			const speed = 1 + ndx * .1;
 			const rot = time * speed;
-			cube.rotation.x = rot;
-			cube.rotation.y = rot;
+			// cylinder.rotation.x = rot;
+			cylinder.rotation.y = rot;
 
 		} );
 
