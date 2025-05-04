@@ -9,27 +9,31 @@ async function main (){
 	const canvas = document.querySelector( '#mainCanvas' );
 	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
 
-	const fov = 120;
+	const fov = 60;
 	const aspect = 2; // the canvas default
 	const near = 0.1;
-	const far = 50;
+	const far = 1000;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.z = 10;
+	camera.position.set( 0, 0, 50 );
+	camera.lookAt( 0, 0, 0 );
 
 	const scene = new THREE.Scene();
-	const objects = [];
+	const skyObjects = [];
 	{
-
 		const color = 0xFFFFFF;
 		const intensity = 3;
 		const light = new THREE.DirectionalLight( color, intensity );
 		light.position.set( - 1, 2, 4 );
 		scene.add( light );
-
 	}
 
-	const radiusTop = 30;
-	const radiusBottom = 30;  
+	const skySystem = new THREE.Object3D();
+	skySystem.position.set( 0, -65, 0 );
+	scene.add( skySystem );
+	skyObjects.push( skySystem );
+
+	const radiusTop = 50;
+	const radiusBottom = 50;  
 	const height = 6;  
 	const radialSegments = 60;
 
@@ -38,28 +42,27 @@ async function main (){
 	const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
 	const cylinder = new THREE.Mesh( geometry, material );
 	cylinder.position.x = 0;
-	cylinder.position.y = -40;
+	cylinder.position.y = -65;
+	cylinder.position.z = 0;
 	cylinder.rotation.x = Math.PI / 2;
 
 	scene.add( cylinder );
-	objects.push( cylinder );
+	// skyObjects.push( cylinder );
 
-	const boxWidth = 8;  
-	const boxHeight = 8;  
-	const boxDepth = 8; 
+	const boxWidth = 3;  
+	const boxHeight = 3;  
+	const boxDepth = 3; 
 	const boxGeo = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
 	const boxMaterial = new THREE.MeshPhongMaterial({color: 'white'});
 	const Box = new THREE.Mesh( boxGeo, boxMaterial );
 	Box.position.x = 0;
-	Box.position.y = -20;
-	Box.position.z = -50;
+	Box.position.y = -100;
+	Box.position.z = -20;
 	Box.rotation.x = Math.PI / 2;
 
-	cylinder.z = -50;
-
-	cylinder.add( Box );
-	objects.push( Box );
+	skySystem.add( Box );
+	skyObjects.push( Box );
 
 	const starsGeo = new THREE.DodecahedronGeometry(0.1, 1);
 	const starsSpace = 150;
@@ -69,7 +72,7 @@ async function main (){
 		
 		star.position.x = Math.random() * starsSpace - spaceFix;
 		star.position.y = Math.random() * starsSpace - spaceFix;
-		star.position.z = Math.random() * starsSpace - spaceFix;
+		star.position.z = Math.random() * starsSpace - spaceFix - 20;
 
 		star.rotation.x = Math.random() * 2 * Math.PI;
 		star.rotation.y = Math.random() * 2 * Math.PI;
@@ -77,11 +80,18 @@ async function main (){
 
 		star.scale.x, star.scale.y, star.scale.z = Math.random() + 1.5;
 		
-		cylinder.add(star);
-		objects.push( star );
+		skySystem.add(star);
+		skyObjects.push( star );
 	}
 
-
+	// add an AxesHelper to each node
+	// skyObjects.forEach( ( node ) => {
+	// 	const axes = new THREE.AxesHelper();
+	// 	axes.material.depthTest = false;
+	// 	axes.renderOrder = 1;
+	// 	node.add( axes );
+	// } );
+	
 	function resizeRendererToDisplaySize( renderer ) {
 
 		const canvas = renderer.domElement;
@@ -111,8 +121,8 @@ async function main (){
 
 		}
 
-		objects.forEach( ( obj ) => {
-			obj.rotation.y = time * 0.3;
+		skyObjects.forEach( ( obj ) => {
+			obj.rotation.z = time * 0.3;
 		} );
 
 		renderer.render( scene, camera );
