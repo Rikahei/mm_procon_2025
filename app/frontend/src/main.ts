@@ -2,6 +2,7 @@ import { player } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
 import { skyObjects, skySystem } from "./skySystem";
+import { zodiacObjects, zodiacSystem, flow } from "./zodiacSystem";
 
 async function main (){
   	// load text-alive player
@@ -15,7 +16,7 @@ async function main (){
 	const near = 0.1;
 	const far = 1000;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.set( 0, 0, 50 );
+	camera.position.set( 0, 0, 50 ); // default z = 50
 	camera.lookAt( 0, 0, 0 );
 
 	const scene = new THREE.Scene();
@@ -28,6 +29,7 @@ async function main (){
 	}
 
 	scene.add( skySystem );
+	scene.add( zodiacSystem );
 
 	const radiusTop = 50;
 	const radiusBottom = 50;  
@@ -43,7 +45,7 @@ async function main (){
 	cylinder.position.z = 0;
 	cylinder.rotation.x = Math.PI / 2;
 
-	scene.add( cylinder );	
+	scene.add( cylinder );
 	
 	function resizeRendererToDisplaySize( renderer ) {
 
@@ -75,8 +77,12 @@ async function main (){
 		}
 
 		skyObjects.forEach( ( obj ) => {
-			obj.rotation.z = time * 0.3;
+			obj.rotation.z = time * 0.1;
 		} );
+
+		if ( flow ) {
+			flow.moveAlongCurve( 0.0005 );
+		}
 
 		renderer.render( scene, camera );
 
