@@ -81,7 +81,7 @@ async function main (){
 		} );
 
 		if ( flow ) {
-			flow.moveAlongCurve( 0.0005 );
+			flow.moveAlongCurve( -0.0005 );
 		}
 
 		renderer.render( scene, camera );
