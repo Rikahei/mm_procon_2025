@@ -1,0 +1,59 @@
+import * as THREE from 'three';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { Flow } from 'three/addons/modifiers/CurveModifier.js';
+
+export { zodiacSystem, zodiacObjects, flow };
+
+const zodiacObjects = [];
+let flow;
+
+const zodiacSystem = new THREE.Object3D();
+zodiacObjects.push( zodiacSystem );
+
+// Define 8 points manually for a closed loop (approx radius 80, z = -10)
+const curve = new THREE.CatmullRomCurve3( [
+	new THREE.Vector3( 0, 15, -10 ),    // Top
+	new THREE.Vector3( 57, -8, -10 ),   // Top-Right
+	new THREE.Vector3( 80, -65, -10 ),    // Right
+	new THREE.Vector3( 57, -122, -10 ),  // Bottom-Right
+	new THREE.Vector3( 0, -145, -10 ),   // Bottom
+	new THREE.Vector3( -57, -122, -10 ), // Bottom-Left
+	new THREE.Vector3( -80, -65, -10 ),   // Left
+	new THREE.Vector3( -57, -8, -10 )   // Top-Left
+]);
+curve.curveType = 'centripetal';
+curve.closed = true;
+const points = curve.getPoints( 50 );
+const line = new THREE.LineLoop(
+    new THREE.BufferGeometry().setFromPoints( points ),
+    new THREE.LineBasicMaterial( { 
+        color: 0x00ff00,
+        transparent: true,
+        opacity: 0
+     } )
+);
+zodiacSystem.add( line );
+const loader = new FontLoader();
+
+loader.load( "../public/fonts/Rounded_Mplus_1c_Medium_Regular.typeface.json", function ( font ) { // Added leading slash
+    const textGeo = new TextGeometry( 'マジカルミライ２０２５', {
+        font: font,
+        size: 3,
+        depth: 0.5,
+        curveSegments: 6,
+        bevelEnabled: true,
+        bevelThickness: 0.02,
+        bevelSize: 0.01,
+        bevelOffset: 0,
+        bevelSegments: 2,
+	} );
+	const textMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x555555, shininess: 30 } ); // White text
+	const objectToCurve = new THREE.Mesh( textGeo, textMaterial );
+    textGeo.rotateX( 33 );
+
+    flow = new Flow( objectToCurve );
+    flow.updateCurve( 0, curve );
+    zodiacSystem.add( flow.object3D );
+
+} );
