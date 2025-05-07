@@ -94,7 +94,8 @@ async function main (){
 				playerPosition = player.timer.position;
 	
 				phrase = player.video.findPhrase(playerPosition, { loose: true });
-				if(phrase.startTime < playerPosition && playerPosition < phrase.endTime 
+				if( phrase != null &&
+					phrase.startTime < playerPosition && playerPosition < phrase.endTime 
 					&& lastPhrase != phrase.text	
 				){
 					// char = player.video.findChar(playerPosition, { loose: true });
