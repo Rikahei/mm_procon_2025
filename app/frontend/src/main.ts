@@ -1,8 +1,8 @@
-import { player } from "./textalive-player";
+import { player, video } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
 import { skyObjects, skySystem } from "./skySystem";
-import { zodiacObjects, zodiacSystem, flow } from "./zodiacSystem";
+import { zodiacObjects, zodiacSystem, flow, loadFont, refreshText } from "./zodiacSystem";
 
 async function main (){
   	// load text-alive player
@@ -64,8 +64,16 @@ async function main (){
 
 	}
 
-	function render( time ) {
+	let char = '';
+	let lastChar = '';
+	let phrase = undefined;
+	let lastPhrase = '';
+	let playerPosition = 0;
 
+	loadFont();
+
+	function render( time ) {
+		
 		time *= 0.001;
 
 		if ( resizeRendererToDisplaySize( renderer ) ) {
@@ -82,6 +90,18 @@ async function main (){
 
 		if ( flow ) {
 			flow.moveAlongCurve( -0.0005 );
+			if(player.video) {
+				playerPosition = player.timer.position;
+	
+				phrase = player.video.findPhrase(playerPosition, { loose: true });
+				if(phrase.startTime < playerPosition && playerPosition < phrase.endTime 
+					&& lastPhrase != phrase.text	
+				){
+					// char = player.video.findChar(playerPosition, { loose: true });
+					lastPhrase = phrase.text;
+					refreshText(phrase.text);
+				}
+			}
 		}
 
 		renderer.render( scene, camera );
