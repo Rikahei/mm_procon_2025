@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { Flow } from 'three/addons/modifiers/CurveModifier.js';
 
 export { zodiacSystem, zodiacObjects, flow, loadFont, refreshText};
@@ -45,25 +44,23 @@ function loadFont() {
 }
 
 function createText (text) {
-    const textGeo = new TextGeometry( text, {
-        font: font,
-        size: 3,
-        depth: 0.5,
-        curveSegments: 6,
-        bevelEnabled: true,
-        bevelThickness: 0.02,
-        bevelSize: 0.01,
-        bevelOffset: 0,
-        bevelSegments: 2,
-    } );
-    const textMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x555555, shininess: 30 } ); // White text
+    const shapes = font.generateShapes( text, 5 );
+    const textGeo = new THREE.ShapeGeometry( shapes );
+    const textMaterial = new THREE.MeshToonMaterial( {
+            color: 0xffffff,
+            transparent: true,
+            alphaHash: true,
+            opacity: 0.8
+        } );
+    textGeo.computeBoundingBox();
+
     const objectToCurve = new THREE.Mesh( textGeo, textMaterial );
     textGeo.rotateX( 33 );
 
     flow = new Flow( objectToCurve );
     flow.updateCurve( 0, curve );
     // Set init position of text
-    flow.uniforms.pathOffset.value = 0.8;
+    flow.uniforms.pathOffset.value = 0.65;
     zodiacSystem.add( flow.object3D );
 }
 
