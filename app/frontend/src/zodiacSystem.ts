@@ -49,7 +49,6 @@ function createText (text) {
     const textMaterial = new THREE.MeshToonMaterial( {
             color: 0xffffff,
             transparent: true,
-            alphaHash: true,
             opacity: 0.8
         } );
     textGeo.computeBoundingBox();
