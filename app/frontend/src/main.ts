@@ -9,7 +9,7 @@ async function main (){
   	await player;
 
 	const canvas = document.querySelector( '#mainCanvas' );
-	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
+	const renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true, canvas } );
 
 	const fov = 60;
 	const aspect = 2; // the canvas default

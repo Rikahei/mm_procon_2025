@@ -46,10 +46,11 @@ function loadFont() {
 function createText (text) {
     const shapes = font.generateShapes( text, 5 );
     const textGeo = new THREE.ShapeGeometry( shapes );
-    const textMaterial = new THREE.MeshToonMaterial( {
+    const textMaterial = new THREE.LineBasicMaterial( {
             color: 0xffffff,
-            transparent: true,
-            opacity: 0.8
+            linewidth: 1,
+            // transparent: true,
+            // opacity: 0.8
         } );
     textGeo.computeBoundingBox();
 
