@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { Flow } from 'three/addons/modifiers/CurveModifier.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 
 export { zodiacSystem, zodiacObjects, flow, loadFont, refreshText};
 
@@ -53,11 +56,39 @@ function createText (text) {
             // opacity: 0.8
         } );
     textGeo.computeBoundingBox();
+    const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
-    const objectToCurve = new THREE.Mesh( textGeo, textMaterial );
-    textGeo.rotateX( 33 );
+    const strokeGroup = new THREE.Group();
+    strokeGroup.position.x = centerOffset;
+    const lineMaterial = new LineMaterial( {
+        color: 0xffffff,
+        linewidth: 3,
+    } );
 
-    flow = new Flow( objectToCurve );
+    function getStrokeMesh({ shape, i = 0.0 }) {
+        let points = shape.getPoints();
+        let points3d = [];
+        points.forEach((p) => {
+            points3d.push(p.x, p.y, 0);
+        });
+        const lineGeo = new LineGeometry();
+        lineGeo.setPositions( points3d );
+
+        const strokeMesh = new Line2( lineGeo, lineMaterial );
+        strokeMesh.computeLineDistances();
+        return strokeMesh;
+    }
+
+    shapes.forEach((s, i) => {
+        strokeGroup.add(getStrokeMesh({ shape: s, i }));
+        if (s.holes?.length > 0) {
+          s.holes.forEach((h) => {
+            strokeGroup.add(getStrokeMesh({ shape: h, i }));
+          });
+        }
+    });
+
+    flow = new Flow( strokeGroup );
     flow.updateCurve( 0, curve );
     // Set init position of text
     flow.uniforms.pathOffset.value = 0.65;
