@@ -1,9 +1,8 @@
 import * as THREE from 'three';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TTFLoader } from "three/addons/loaders/TTFLoader.js";
+import { Font } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { Flow } from 'three/addons/modifiers/CurveModifier.js';
-import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
-import { Line2 } from 'three/addons/lines/Line2.js';
-import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 
 export { zodiacSystem, zodiacObjects, flow, loadFont, refreshText};
 
@@ -36,62 +35,58 @@ const line = new THREE.LineLoop(
      } )
 );
 zodiacSystem.add( line );
-const loader = new FontLoader();
+const loader = new TTFLoader();
 let message = 'マジカルミライ２０２５';
 
 function loadFont() {
-    loader.load( "../public/fonts/Rounded_Mplus_1c_Medium_Regular.typeface.json", function ( response ) { 
-        font = response;
+    loader.load( "../public/fonts/MPLUSRounded1c-Medium.ttf", function ( response ) { 
+        font = new Font(response);
         refreshText(message);
     } );
 }
 
+const vertices = [];
+
+for ( let i = 0; i < 10000; i ++ ) {
+	const x = THREE.MathUtils.randFloatSpread( 2000 );
+	const y = THREE.MathUtils.randFloatSpread( 2000 );
+	const z = THREE.MathUtils.randFloatSpread( 2000 );
+
+	vertices.push( x, y, z );
+}
+
 function createText (text) {
-    const shapes = font.generateShapes( text, 5 );
-    const textGeo = new THREE.ShapeGeometry( shapes );
-    const textMaterial = new THREE.LineBasicMaterial( {
-            color: 0xffffff,
+    const textGroup = new THREE.Group();
+    const props = {
+      font,
+      size: 8,
+      depth: 0.1,
+      curveSegments: 5,
+      bevelEnabled: true,
+      bevelThickness: 0.08,
+      bevelSize: 0.01,
+      bevelOffset: 0,
+      bevelSegments: 2,
+    };
+    const textGeo = new TextGeometry(text, props);
+    textGeo.computeBoundingBox();
+    const textMaterial = new THREE.MeshBasicMaterial( {
+            color: 0xff9900,
             linewidth: 1,
+            wireframe: true,
             // transparent: true,
             // opacity: 0.8
         } );
     textGeo.computeBoundingBox();
     const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
-    const strokeGroup = new THREE.Group();
-    strokeGroup.position.x = centerOffset;
-    const lineMaterial = new LineMaterial( {
-        color: 0xffffff,
-        linewidth: 3,
-    } );
+	const objectToCurve = new THREE.Mesh( textGeo, textMaterial );
+    textGeo.rotateX( 33 );
 
-    function getStrokeMesh({ shape, i = 0.0 }) {
-        let points = shape.getPoints();
-        let points3d = [];
-        points.forEach((p) => {
-            points3d.push(p.x, p.y, 0);
-        });
-        const lineGeo = new LineGeometry();
-        lineGeo.setPositions( points3d );
-
-        const strokeMesh = new Line2( lineGeo, lineMaterial );
-        strokeMesh.computeLineDistances();
-        return strokeMesh;
-    }
-
-    shapes.forEach((s, i) => {
-        strokeGroup.add(getStrokeMesh({ shape: s, i }));
-        if (s.holes?.length > 0) {
-          s.holes.forEach((h) => {
-            strokeGroup.add(getStrokeMesh({ shape: h, i }));
-          });
-        }
-    });
-
-    flow = new Flow( strokeGroup );
+    flow = new Flow( objectToCurve );
     flow.updateCurve( 0, curve );
     // Set init position of text
-    flow.uniforms.pathOffset.value = 0.65;
+    flow.uniforms.pathOffset.value = 0.6;
     zodiacSystem.add( flow.object3D );
 }
 

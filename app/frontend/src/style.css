@@ -1,7 +1,7 @@
 /* 背景 / Background */
 html, body {
-  /* background: #c33c68; */
-  background-image: url('../public/images/background.jpg');
+  background: black;
+  /* background-image: url('../public/images/background.jpg'); */
   background-attachment: fixed;
   background-size: 100vw 100vh;
   margin: 0;
