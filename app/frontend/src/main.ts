@@ -2,7 +2,7 @@ import { player, video } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
 import { skyObjects, skySystem } from "./skySystem";
-import { zodiacObjects, zodiacSystem, flow, loadFont, refreshText } from "./zodiacSystem";
+import { uniforms, zodiacSystem, loadFont, refreshText } from "./zodiacSystem";
 
 async function main (){
   	// load text-alive player
@@ -69,6 +69,7 @@ async function main (){
 	let phrase = undefined;
 	let lastPhrase = '';
 	let playerPosition = 0;
+	let meshControll = 100 * Math.random();
 
 	loadFont();
 
@@ -87,13 +88,17 @@ async function main (){
 		skyObjects.forEach( ( obj ) => {
 			obj.rotation.z = time * 0.1;
 		} );
-
-		if ( flow ) {
-			flow.moveAlongCurve( -0.0005 );
+		if ( uniforms ) {
 			if(player.video) {
 				playerPosition = player.timer.position;
-	
 				phrase = player.video.findPhrase(playerPosition, { loose: true });
+				if(meshControll >= 0.005){
+					meshControll = (phrase.endTime - playerPosition) / 10000;
+					uniforms.amplitude.value = meshControll;
+				}else{
+					uniforms.amplitude.value = 0;
+				}
+				
 				if( phrase != null &&
 					phrase.startTime < playerPosition && playerPosition < phrase.endTime 
 					&& lastPhrase != phrase.text	
@@ -101,6 +106,7 @@ async function main (){
 					// char = player.video.findChar(playerPosition, { loose: true });
 					lastPhrase = phrase.text;
 					refreshText(phrase.text);
+					meshControll = 100 * Math.random();
 				}
 			}
 		}
