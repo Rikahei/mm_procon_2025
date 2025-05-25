@@ -2,7 +2,7 @@ import { player, video } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
 import { skyObjects, skySystem } from "./skySystem";
-import { uniforms, zodiacSystem, loadFont, refreshText } from "./zodiacSystem";
+import { uniforms, textGroup, zodiacSystem, loadFont, createText, refreshText } from "./zodiacSystem";
 
 async function main (){
   	// load text-alive player
@@ -69,17 +69,18 @@ async function main (){
 	let phrase = undefined;
 	let lastPhrase = '';
 	let playerPosition = 0;
-	let meshControll = 100 * Math.random();
+	let meshControl = 0;
+	let charTemp = '';
+	let charPosition = 0;
 
 	loadFont();
 
 	function render( time ) {
-		
+		const canvas = renderer.domElement;
 		time *= 0.001;
 
 		if ( resizeRendererToDisplaySize( renderer ) ) {
 
-			const canvas = renderer.domElement;
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			camera.updateProjectionMatrix();
 
@@ -92,25 +93,38 @@ async function main (){
 			if(player.video) {
 				playerPosition = player.timer.position;
 				phrase = player.video.findPhrase(playerPosition, { loose: true });
-				if(meshControll >= 0.005){
-					meshControll = (phrase.endTime - playerPosition) / 10000;
-					uniforms.amplitude.value = meshControll;
+				char = player.video.findChar(playerPosition, { loose: true });
+				if(meshControl >= 0.005){
+					meshControl = (phrase.endTime - playerPosition) / 5000;
+					uniforms.amplitude.value = meshControl;
 				}else{
 					uniforms.amplitude.value = 0;
 				}
 				
+				if( char != null &&
+					char.startTime < playerPosition && playerPosition < char.endTime 
+					&& lastChar != char.text	
+				){
+					lastChar = char.text;
+					charTemp = createText(char.text);
+					charTemp.position.y = 10;
+					charTemp.position.x = charPosition;
+					textGroup.add(charTemp);
+					charPosition = charPosition + 5;
+					meshControl = 100 * Math.random();
+				}
+
 				if( phrase != null &&
-					phrase.startTime < playerPosition && playerPosition < phrase.endTime 
+					phrase.startTime - 100 < playerPosition && playerPosition < phrase.endTime 
 					&& lastPhrase != phrase.text	
 				){
-					// char = player.video.findChar(playerPosition, { loose: true });
 					lastPhrase = phrase.text;
-					refreshText(phrase.text);
-					meshControll = 100 * Math.random();
+					textGroup.clear();
+					charPosition = -Math.abs( (phrase.charCount / canvas.clientWidth) * 1000 * 3 + 2 );
 				}
 			}
 		}
-
+		zodiacSystem.add(textGroup);
 		renderer.render( scene, camera );
 
 		requestAnimationFrame( render );

@@ -4,11 +4,12 @@ import { Font } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
 
-export { zodiacSystem, uniforms, loadFont, refreshText};
+export { zodiacSystem, uniforms, textGroup, loadFont, createText, refreshText};
 
 const zodiacObjects = [];
 let font, mestText;
 
+const textGroup = new THREE.Group();
 const zodiacSystem = new THREE.Object3D();
 zodiacObjects.push( zodiacSystem );
 
@@ -32,7 +33,6 @@ let shaderMaterial = new THREE.ShaderMaterial( {
 } );
 
 function createText (text) {
-    const textGroup = new THREE.Group();
     const props = {
       font,
       size: 3.5,
@@ -47,7 +47,6 @@ function createText (text) {
     let textGeo = new TextGeometry(text, props);
     textGeo.computeBoundingBox();
     const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
-    textGeo.center();
 
     const tessellateModifier = new TessellateModifier( 8, 6 );
     textGeo = tessellateModifier.modify( textGeo );
@@ -77,13 +76,12 @@ function createText (text) {
 	textGeo.setAttribute( 'displacement', new THREE.BufferAttribute( displacement, 3 ) );
 
     mestText = new THREE.Mesh( textGeo, shaderMaterial );
-
-    zodiacSystem.add (mestText);
+    return mestText;
 }
 
 function refreshText(text) { 
-    if (mestText) {
-        zodiacSystem.remove (mestText);
-    }
-    createText(text);
+    // if (mestText) {
+        // zodiacSystem.remove (mestText);
+    // }
+    return createText(text);
 }
