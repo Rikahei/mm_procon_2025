@@ -23,16 +23,7 @@ function loadFont() {
     } );
 }
 
-let uniforms = {
-	amplitude: { value: 0.0 }
-};
-let shaderMaterial = new THREE.ShaderMaterial( {
-	uniforms: uniforms,
-	vertexShader: document.getElementById( 'vertexshader' ).textContent,
-	fragmentShader: document.getElementById( 'fragmentshader' ).textContent
-} );
-
-function createText (text) {
+function createText (text, textMaterial) {
     const props = {
       font,
       size: 3.5,
@@ -75,13 +66,12 @@ function createText (text) {
     textGeo.setAttribute( 'customColor', new THREE.BufferAttribute( colors, 3 ) );
 	textGeo.setAttribute( 'displacement', new THREE.BufferAttribute( displacement, 3 ) );
 
-    mestText = new THREE.Mesh( textGeo, shaderMaterial );
+    mestText = new THREE.Mesh( textGeo, textMaterial );
     return mestText;
 }
 
-function refreshText(text) { 
-    // if (mestText) {
-        // zodiacSystem.remove (mestText);
-    // }
-    return createText(text);
+function refreshText() {
+    if(textGroup) {
+        textGroup.clear();
+    }
 }

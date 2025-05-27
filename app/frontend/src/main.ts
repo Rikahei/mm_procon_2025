@@ -72,6 +72,19 @@ async function main (){
 	let meshControl = 0;
 	let charTemp = '';
 	let charPosition = 0;
+	let fixPosition = 0;
+
+	let uniforms = {
+		amplitude: { value: 0.0 }
+	};
+	let shaderMaterial = new THREE.ShaderMaterial( {
+		uniforms: uniforms,
+		vertexShader: document.getElementById( 'vertexshader' ).textContent,
+		fragmentShader: document.getElementById( 'fragmentshader' ).textContent
+	} );
+
+	let movingMaterial = shaderMaterial.clone();
+	movingMaterial.uniforms.amplitude.value = 0.1;
 
 	loadFont();
 
@@ -94,24 +107,33 @@ async function main (){
 				playerPosition = player.timer.position;
 				phrase = player.video.findPhrase(playerPosition, { loose: true });
 				char = player.video.findChar(playerPosition, { loose: true });
-				if(meshControl >= 0.005){
-					meshControl = (phrase.endTime - playerPosition) / 5000;
-					uniforms.amplitude.value = meshControl;
-				}else{
-					uniforms.amplitude.value = 0;
-				}
 				
 				if( char != null &&
 					char.startTime < playerPosition && playerPosition < char.endTime 
 					&& lastChar != char.text	
 				){
 					lastChar = char.text;
-					charTemp = createText(char.text);
+					if(charTemp.material){
+						textGroup.remove(charTemp);
+						let charFix = createText(char.text, shaderMaterial);
+						charFix.position.y = 10;
+						charFix.position.x = fixPosition;
+						textGroup.add(charFix);
+						fixPosition = fixPosition + 5;
+					}
+					charTemp = createText(char.text, movingMaterial);
 					charTemp.position.y = 10;
 					charTemp.position.x = charPosition;
 					textGroup.add(charTemp);
 					charPosition = charPosition + 5;
 					meshControl = 100 * Math.random();
+				}
+
+				if(meshControl >= 0.02){
+					meshControl = (phrase.endTime - playerPosition) / 5000;
+					movingMaterial.uniforms.amplitude.value = meshControl;
+				}else{
+					movingMaterial.uniforms.amplitude.value = 0;
 				}
 
 				if( phrase != null &&
@@ -121,6 +143,7 @@ async function main (){
 					lastPhrase = phrase.text;
 					textGroup.clear();
 					charPosition = -Math.abs( (phrase.charCount / canvas.clientWidth) * 1000 * 3 + 2 );
+					fixPosition = -Math.abs( (phrase.charCount / canvas.clientWidth) * 1000 * 3 + 2 );
 				}
 			}
 		}
