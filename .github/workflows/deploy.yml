@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - threejs
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
           cd app/frontend
           npm ci
 
-      - name: Build project (only if tests pass)
+      - name: Build project
         run: |
           cd app/frontend
           npm run build
