@@ -35,11 +35,13 @@ loader.load( "../public/models/star3.glb", function ( gltf ) {
 });
 
 // Stars
-const starsGeo = new THREE.DodecahedronGeometry(0.1, 1);
+const starsGeo = new THREE.TetrahedronGeometry(0.2, 2);
 const starsSpace = 220;
 const spaceFix = 110;
 for (let i = 0; i < 200; i++) {
-    const star = new THREE.Mesh(starsGeo, new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }));
+    const star = new THREE.Mesh(starsGeo, new THREE.MeshLambertMaterial({ 
+        color: Math.random() * 0xffffff 
+    }));
     
     star.position.x = Math.random() * starsSpace - spaceFix;
     star.position.y = Math.random() * starsSpace - spaceFix;
@@ -49,7 +51,7 @@ for (let i = 0; i < 200; i++) {
     star.rotation.y = Math.random() * 2 * Math.PI;
     star.rotation.z = Math.random() * 2 * Math.PI - 10;
 
-    star.scale.x, star.scale.y, star.scale.z = Math.random() * 2 + 3;
+    star.scale.x, star.scale.y, star.scale.z = Math.random() + 0.2;
     
     skySystem.add(star);
     skyObjects.push( star );

@@ -50,17 +50,17 @@ player.addListener({
       document.querySelector("#media").className = "disabled";
 
       // ストリートライト / 加賀(ネギシャワーP)
-      player.createFromSongUrl("https://piapro.jp/t/ULcJ/20250205120202", {
+      player.createFromSongUrl("https://piapro.jp/t/CyPO/20250128183915", {
         video: {
-          // 音楽地図訂正履歴
-          beatId: 4694275,
-          chordId: 2830730,
-          repetitiveSegmentId: 2946478,
+          // // 音楽地図訂正履歴
+          // beatId: 4694275,
+          // chordId: 2830730,
+          // repetitiveSegmentId: 2946478,
       
-          // 歌詞URL: https://piapro.jp/t/DPXV
-          // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FULcJ%2F20250205120202
-          lyricId: 67810,
-          lyricDiffId: 20654
+          // // 歌詞URL: https://piapro.jp/t/DPXV
+          // // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FULcJ%2F20250205120202
+          // lyricId: 67810,
+          // lyricDiffId: 20654
         },
       });
     }
@@ -95,7 +95,7 @@ player.addListener({
 
     // 最後に取得した再生時刻の情報をリセット
     lastTime = -1;
-    player.volume = 5;
+    player.volume = 20;
   },
 
   /* 再生コントロールができるようになったら呼ばれる */
