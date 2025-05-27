@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import Star3Model from '../public/models/star3.glb';
 export { skySystem, skyObjects };
 
 const skyObjects = [];
@@ -19,7 +20,7 @@ skySystem.add( moon );
 skyObjects.push( moon );
 
 const loader = new GLTFLoader();
-loader.load( "../public/models/star3.glb", function ( gltf ) {
+loader.load( Star3Model, function ( gltf ) {
     const desiredScale = 1.5;
     for (let i = 0; i < 50; i++) {
         const starClone = gltf.scene.clone();

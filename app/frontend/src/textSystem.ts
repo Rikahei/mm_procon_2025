@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { TTFLoader } from "three/addons/loaders/TTFLoader.js";
 import { Font } from 'three/addons/loaders/FontLoader.js';
+import MplusRouned1cMedium from '../public/fonts/MPLUSRounded1c-Medium.ttf';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
 
@@ -17,7 +18,7 @@ const loader = new TTFLoader();
 let message = 'マジカルミライ２０２５';
 
 function loadFont() {
-    loader.load( "../public/fonts/MPLUSRounded1c-Medium.ttf", function ( response ) { 
+    loader.load( MplusRouned1cMedium, function ( response ) { 
         font = new Font(response);
         refreshText(message);
     } );
