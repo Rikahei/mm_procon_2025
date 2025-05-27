@@ -23,7 +23,6 @@ jobs:
           npm ci
 
       - name: Build project (only if tests pass)
-        if: ${{ success() }}
         run: |
           cd app/frontend
           npm run build
