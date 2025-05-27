@@ -2,7 +2,7 @@ import { player, video } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
 import { skyObjects, skySystem } from "./skySystem";
-import { uniforms, textGroup, zodiacSystem, loadFont, createText, refreshText } from "./zodiacSystem";
+import { textGroup, textSystem, loadFont, createText, refreshText } from "./textSystem";
 
 async function main (){
   	// load text-alive player
@@ -29,7 +29,7 @@ async function main (){
 	}
 
 	scene.add( skySystem );
-	scene.add( zodiacSystem );
+	scene.add( textSystem );
 
 	const radiusTop = 50;
 	const radiusBottom = 50;  
@@ -48,114 +48,92 @@ async function main (){
 	scene.add( cylinder );
 	
 	function resizeRendererToDisplaySize( renderer ) {
-
 		const canvas = renderer.domElement;
 		const pixelRatio = window.devicePixelRatio;
 		const width = Math.floor( canvas.clientWidth * pixelRatio );
 		const height = Math.floor( canvas.clientHeight * pixelRatio );
 		const needResize = canvas.width !== width || canvas.height !== height;
 		if ( needResize ) {
-
 			renderer.setSize( width, height, false );
-
 		}
-
 		return needResize;
-
 	}
 
-	let char = '';
-	let lastChar = '';
-	let phrase = undefined;
-	let lastPhrase = '';
-	let playerPosition = 0;
-	let meshControl = 0;
-	let charTemp = '';
-	let charPosition = 0;
-	let fixPosition = 0;
+	// load the font
+	loadFont();
+	let char, lastChar, phrase, lastPhrase, charTemp, charFix = undefined;
+	let playerPosition, meshControl, charPosition, fixPosition = 0;
 
-	let uniforms = {
-		amplitude: { value: 0.0 }
-	};
+	// Set materials
 	let shaderMaterial = new THREE.ShaderMaterial( {
-		uniforms: uniforms,
+		uniforms: { amplitude: { value: 0.0 } },
 		vertexShader: document.getElementById( 'vertexshader' ).textContent,
 		fragmentShader: document.getElementById( 'fragmentshader' ).textContent
 	} );
-
+	// set moveing material
 	let movingMaterial = shaderMaterial.clone();
-	movingMaterial.uniforms.amplitude.value = 0.1;
-
-	loadFont();
+	movingMaterial.uniforms.amplitude.value = 1;
 
 	function render( time ) {
 		const canvas = renderer.domElement;
 		time *= 0.001;
-
 		if ( resizeRendererToDisplaySize( renderer ) ) {
-
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			camera.updateProjectionMatrix();
-
 		}
-
+		// skyObject rotations
 		skyObjects.forEach( ( obj ) => {
 			obj.rotation.z = time * 0.1;
 		} );
-		if ( uniforms ) {
-			if(player.video) {
-				playerPosition = player.timer.position;
-				phrase = player.video.findPhrase(playerPosition, { loose: true });
-				char = player.video.findChar(playerPosition, { loose: true });
-				
-				if( char != null &&
-					char.startTime < playerPosition && playerPosition < char.endTime 
-					&& lastChar != char.text	
-				){
-					lastChar = char.text;
-					if(charTemp.material){
-						textGroup.remove(charTemp);
-						let charFix = createText(char.text, shaderMaterial);
-						charFix.position.y = 10;
-						charFix.position.x = fixPosition;
-						textGroup.add(charFix);
-						fixPosition = fixPosition + 5;
-					}
-					charTemp = createText(char.text, movingMaterial);
-					charTemp.position.y = 10;
-					charTemp.position.x = charPosition;
-					textGroup.add(charTemp);
-					charPosition = charPosition + 5;
-					meshControl = 100 * Math.random();
+		// Set player video
+		if(player.video) {
+			playerPosition = player.timer.position;
+			phrase = player.video.findPhrase(playerPosition, { loose: true });
+			char = player.video.findChar(playerPosition, { loose: true });
+			// If position reach char time...
+			if( char != null &&
+				char.startTime < playerPosition && playerPosition < char.endTime 
+				&& lastChar != char.text	
+			){
+				// Replace char with no animation
+				if(charTemp || !lastChar){
+					textGroup.remove(charTemp);
+					charFix = createText(char.text, shaderMaterial);
+					charFix.position.x = fixPosition;
+					textGroup.add(charFix);
+					fixPosition = fixPosition + 5;
 				}
-
-				if(meshControl >= 0.02){
-					meshControl = (phrase.endTime - playerPosition) / 5000;
-					movingMaterial.uniforms.amplitude.value = meshControl;
-				}else{
-					movingMaterial.uniforms.amplitude.value = 0;
-				}
-
-				if( phrase != null &&
-					phrase.startTime - 100 < playerPosition && playerPosition < phrase.endTime 
-					&& lastPhrase != phrase.text	
-				){
-					lastPhrase = phrase.text;
-					textGroup.clear();
-					charPosition = -Math.abs( (phrase.charCount / canvas.clientWidth) * 1000 * 3 + 2 );
-					fixPosition = -Math.abs( (phrase.charCount / canvas.clientWidth) * 1000 * 3 + 2 );
-				}
+				// Update lastChar
+				lastChar = char.text;
+				// Add char with animation
+				charTemp = createText(char.text, movingMaterial);
+				charTemp.position.x = charPosition;
+				textGroup.add(charTemp);
+				charPosition = charPosition + 5;
+				meshControl = 100 * Math.random();
+			}
+			// text animation control
+			if(meshControl >= 0.02){
+				meshControl = (phrase.endTime - playerPosition) / 5000;
+				movingMaterial.uniforms.amplitude.value = meshControl;
+			}else{
+				movingMaterial.uniforms.amplitude.value = 0;
+			}
+			// clear text when phrase ended
+			if( phrase != null &&
+				phrase.startTime - 100 < playerPosition && playerPosition < phrase.endTime 
+				&& lastPhrase != phrase.text	
+			){
+				lastPhrase = phrase.text;
+				refreshText();
+				charPosition = -Math.abs( (phrase.charCount / canvas.clientWidth) * 1000 * 3 + 2 );
+				fixPosition = -Math.abs( (phrase.charCount / canvas.clientWidth) * 1000 * 3 + 2 );
 			}
 		}
-		zodiacSystem.add(textGroup);
+		textSystem.add(textGroup);
 		renderer.render( scene, camera );
-
 		requestAnimationFrame( render );
-
 	}
-
 	requestAnimationFrame( render );
-
 }
-
 main();

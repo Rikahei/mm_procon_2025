@@ -4,14 +4,14 @@ import { Font } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
 
-export { zodiacSystem, uniforms, textGroup, loadFont, createText, refreshText};
+export { textSystem, textGroup, loadFont, createText, refreshText};
 
 const zodiacObjects = [];
 let font, mestText;
 
 const textGroup = new THREE.Group();
-const zodiacSystem = new THREE.Object3D();
-zodiacObjects.push( zodiacSystem );
+const textSystem = new THREE.Object3D();
+zodiacObjects.push( textSystem );
 
 const loader = new TTFLoader();
 let message = 'マジカルミライ２０２５';
@@ -67,6 +67,7 @@ function createText (text, textMaterial) {
 	textGeo.setAttribute( 'displacement', new THREE.BufferAttribute( displacement, 3 ) );
 
     mestText = new THREE.Mesh( textGeo, textMaterial );
+    mestText.position.y = 10;
     return mestText;
 }
 
