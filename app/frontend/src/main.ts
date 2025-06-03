@@ -3,6 +3,8 @@ import "./style.css";
 import * as THREE from 'three';
 import { skyObjects, skySystem } from "./skySystem";
 import { textGroup, textSystem, loadFont, createText, refreshText } from "./textSystem";
+import {THREE_GetGifTexture} from "threejs-gif-texture";
+import MikuM1 from "../public/images/M1.gif";
 
 async function main (){
   	// load text-alive player
@@ -74,6 +76,19 @@ async function main (){
 	let movingMaterial = shaderMaterial.clone();
 	movingMaterial.uniforms.amplitude.value = 1;
 
+	let theMiku = undefined
+	THREE_GetGifTexture(MikuM1).then( texture => { 
+		texture.colorSpace = THREE.SRGBColorSpace;
+	    theMiku = new THREE.Mesh( 
+	        new THREE.PlaneGeometry(20, 20), 
+	        new THREE.MeshBasicMaterial({ 
+				map: texture,
+				transparent: true,
+				opacity: 1
+			}));
+	    scene.add(theMiku)   
+	});
+
 	function render( time ) {
 		const canvas = renderer.domElement;
 		time *= 0.001;
@@ -85,6 +100,10 @@ async function main (){
 		skyObjects.forEach( ( obj ) => {
 			obj.rotation.z = time * 0.1;
 		} );
+		if(theMiku) {
+			theMiku.position.y = -5 + Math.sin( time * 0.5 );
+			theMiku.rotation.y = Math.sin( time * 0.5 ) / 2;
+		}
 		// Set player video
 		if(player.video) {
 			playerPosition = player.timer.position;
