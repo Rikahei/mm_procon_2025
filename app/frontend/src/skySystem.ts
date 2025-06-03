@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import Star3Model from '../public/models/star3.glb';
-import backGround from "../public/images/backGround.jpg"
+import backGround from "../public/images/background.jpg"
 export { skySystem, skyObjects };
 
 const skyObjects = [];
