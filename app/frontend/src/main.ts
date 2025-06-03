@@ -4,7 +4,6 @@ import * as THREE from 'three';
 import { skyObjects, skySystem } from "./skySystem";
 import { textGroup, textSystem, loadFont, createText, refreshText } from "./textSystem";
 import {THREE_GetGifTexture} from "threejs-gif-texture";
-import backGround from "../public/images/backGround.jpg"
 import MikuM1 from "../public/images/M1.gif";
 
 async function main (){
