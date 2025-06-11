@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import Star3Model from '../public/models/star3.glb';
-import backGround from "../public/images/background.jpg"
+// import backGround from "../public/images/background.jpg"
 export { skySystem, skyObjects };
 
 const skyObjects = [];
@@ -11,25 +11,25 @@ skySystem.position.set( 0, -65, 0 );
 skyObjects.push( skySystem );
 
 // Background
-const backGeo = new THREE.SphereGeometry(
-	500, 200, 200,
-	Math.PI * 1.05, Math.PI * 2,
-	Math.PI * 0.8, Math.PI * 0.39
-);
-backGeo.center();
-const backLoader = new THREE.TextureLoader();
-backLoader.load( backGround, (texture) => {
-	texture.colorSpace = THREE.SRGBColorSpace;
-	const material = new THREE.MeshBasicMaterial({
-		map: texture,
-	});
-	const starBackground = new THREE.Mesh(backGeo, material);
-	starBackground.rotation.x = 100;
-	starBackground.position.y = -65;
-	starBackground.position.z = -100;
-	starBackground.rotation.x = Math.PI / 2;
-	skySystem.add(starBackground);
-});
+// const backGeo = new THREE.SphereGeometry(
+// 	500, 200, 200,
+// 	Math.PI * 1.05, Math.PI * 2,
+// 	Math.PI * 0.8, Math.PI * 0.39
+// );
+// backGeo.center();
+// const backLoader = new THREE.TextureLoader();
+// backLoader.load( backGround, (texture) => {
+// 	texture.colorSpace = THREE.SRGBColorSpace;
+// 	const material = new THREE.MeshBasicMaterial({
+// 		map: texture,
+// 	});
+// 	const starBackground = new THREE.Mesh(backGeo, material);
+// 	starBackground.rotation.x = 100;
+// 	starBackground.position.y = -65;
+// 	starBackground.position.z = -100;
+// 	starBackground.rotation.x = Math.PI / 2;
+// 	skySystem.add(starBackground);
+// });
 
 // Moon
 const moonGeo = new THREE.DodecahedronGeometry(5, 3);

@@ -1,10 +1,12 @@
 import { player, video } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { skyObjects, skySystem } from "./skySystem";
 import { textGroup, textSystem, loadFont, createText, refreshText } from "./textSystem";
 import {THREE_GetGifTexture} from "threejs-gif-texture";
 import MikuM1 from "../public/images/M1.gif";
+import EarthModel from '../public/models/mm_earth.glb';
 
 async function main (){
   	// load text-alive player
@@ -33,21 +35,19 @@ async function main (){
 	scene.add( skySystem );
 	scene.add( textSystem );
 
-	const radiusTop = 50;
-	const radiusBottom = 50;  
-	const height = 6;  
-	const radialSegments = 60;
-
-	const geometry = new THREE.CylinderGeometry(
-	radiusTop, radiusBottom, height, radialSegments );
-	const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
-	const cylinder = new THREE.Mesh( geometry, material );
-	cylinder.position.x = 0;
-	cylinder.position.y = -65;
-	cylinder.position.z = 0;
-	cylinder.rotation.x = Math.PI / 2;
-
-	scene.add( cylinder );
+	// earth
+	const gLoader = new GLTFLoader();
+	gLoader.load( EarthModel, function ( gltf ) {
+		const earth = gltf.scene;
+		earth.position.x = 0;
+		earth.position.y = -25;
+		earth.position.z = -5;
+		earth.rotation.y = Math.PI / 1;
+		earth.scale.set(3.5, 3.5, 3.5);
+		scene.add( earth );
+	}, undefined, function ( error ) {
+		console.error( error );
+	});
 	
 	function resizeRendererToDisplaySize( renderer ) {
 		const canvas = renderer.domElement;
@@ -76,6 +76,7 @@ async function main (){
 	let movingMaterial = shaderMaterial.clone();
 	movingMaterial.uniforms.amplitude.value = 1;
 
+	// Load Miku
 	let theMiku = undefined
 	THREE_GetGifTexture(MikuM1).then( texture => { 
 		texture.colorSpace = THREE.SRGBColorSpace;
@@ -86,7 +87,9 @@ async function main (){
 				transparent: true,
 				opacity: 1
 			}));
-	    scene.add(theMiku)   
+		theMiku.position.z = 20;
+		theMiku.scale.set(0.5, 0.5, 0.5);
+	    scene.add(theMiku)
 	});
 
 	function render( time ) {
@@ -101,8 +104,8 @@ async function main (){
 			obj.rotation.z = time * 0.1;
 		} );
 		if(theMiku) {
-			theMiku.position.y = -5 + Math.sin( time * 0.5 );
-			theMiku.rotation.y = Math.sin( time * 0.5 ) / 2;
+			theMiku.position.y = -8 + Math.sin( time * 0.5 );
+			theMiku.rotation.y = Math.sin( time * 0.5 ) / 3;
 		}
 		// Set player video
 		if(player.video) {
