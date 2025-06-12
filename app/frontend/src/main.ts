@@ -5,8 +5,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { skyObjects, skySystem } from "./skySystem";
 import { textGroup, textSystem, loadFont, createText, refreshText } from "./textSystem";
 import {THREE_GetGifTexture} from "threejs-gif-texture";
+import { Water } from 'three/addons/objects/Water2.js';
 import MikuM1 from "../public/images/M1.gif";
-import EarthModel from '../public/models/mm_earth.glb';
+import EarthModel from '../public/models/earth_sphere.glb';
 
 async function main (){
   	// load text-alive player
@@ -36,14 +37,15 @@ async function main (){
 	scene.add( textSystem );
 
 	// earth
+	let earth = undefined
 	const gLoader = new GLTFLoader();
 	gLoader.load( EarthModel, function ( gltf ) {
-		const earth = gltf.scene;
+		earth = gltf.scene;
 		earth.position.x = 0;
 		earth.position.y = -25;
-		earth.position.z = -5;
+		earth.position.z = 10;
 		earth.rotation.y = Math.PI / 1;
-		earth.scale.set(3.5, 3.5, 3.5);
+		earth.scale.set(1.2, 1.2, 1.2);
 		scene.add( earth );
 	}, undefined, function ( error ) {
 		console.error( error );
@@ -60,6 +62,24 @@ async function main (){
 		}
 		return needResize;
 	}
+
+	// water
+	const waterGeometry = new THREE.PlaneGeometry( 1000, 1000 );
+	let water = new Water(
+		waterGeometry,
+		{
+			textureWidth: 512,
+			textureHeight: 512,
+			color: 0xe8df61,
+			flowDirection: new THREE.Vector2( 1, 1),
+			scale: 4
+		}
+	);
+	water.rotation.x = 1.5;
+	water.position.x = 0;
+	water.position.y = -15;
+	water.position.z = 0;
+	scene.add( water );
 
 	// load the font
 	loadFont();
@@ -99,12 +119,17 @@ async function main (){
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			camera.updateProjectionMatrix();
 		}
+		// earth rotations
+		if(earth){
+			earth.rotation.x = time * 0.01;
+			earth.rotation.y = time * 0.05;
+		}
 		// skyObject rotations
 		skyObjects.forEach( ( obj ) => {
 			obj.rotation.z = time * 0.1;
 		} );
 		if(theMiku) {
-			theMiku.position.y = -8 + Math.sin( time * 0.5 );
+			theMiku.position.y = 1 + Math.sin( time * 0.5 );
 			theMiku.rotation.y = Math.sin( time * 0.5 ) / 3;
 		}
 		// Set player video
