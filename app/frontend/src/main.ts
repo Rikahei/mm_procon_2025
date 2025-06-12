@@ -6,8 +6,12 @@ import { skyObjects, skySystem } from "./skySystem";
 import { textGroup, textSystem, loadFont, createText, refreshText } from "./textSystem";
 import {THREE_GetGifTexture} from "threejs-gif-texture";
 import { Water } from 'three/addons/objects/Water2.js';
-import MikuM1 from "../public/images/M1.gif";
 import EarthModel from '../public/models/earth_sphere.glb';
+import MikuM1 from "../public/images/M1.gif";
+import MikuA1 from "../public/images/A1.gif";
+import MikuWW from "../public/images/WW.gif";
+
+const mikuRandom = [MikuM1, MikuA1, MikuWW];
 
 async function main (){
   	// load text-alive player
@@ -27,9 +31,9 @@ async function main (){
 	const scene = new THREE.Scene();
 	{
 		const color = 0xFFFFFF;
-		const intensity = 3;
+		const intensity = 5;
 		const light = new THREE.DirectionalLight( color, intensity );
-		light.position.set( - 1, 2, 4 );
+		light.position.set( 0, 3, 10 );
 		scene.add( light );
 	}
 
@@ -98,7 +102,7 @@ async function main (){
 
 	// Load Miku
 	let theMiku = undefined
-	THREE_GetGifTexture(MikuM1).then( texture => { 
+	THREE_GetGifTexture(mikuRandom[Math.floor(Math.random() * mikuRandom.length)]).then( texture => { 
 		texture.colorSpace = THREE.SRGBColorSpace;
 	    theMiku = new THREE.Mesh( 
 	        new THREE.PlaneGeometry(20, 20), 

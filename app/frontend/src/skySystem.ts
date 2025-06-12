@@ -1,10 +1,16 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import Star3Model from '../public/models/star3.glb';
+import Star4 from '../public/models/star4.glb';
+import StarK from '../public/models/star-K.glb';
+import StarL from '../public/models/star-L.glb';
+import StarM from '../public/models/star-M.glb';
+import StarR from '../public/models/star-R.glb';
+import StarRK from '../public/models/star-RK.glb';
 // import backGround from "../public/images/background.jpg"
 export { skySystem, skyObjects };
 
 const skyObjects = [];
+const StarModels = [Star4, StarK, StarL, StarM, StarR, StarRK];
 
 const skySystem = new THREE.Object3D();
 skySystem.position.set( 0, -65, 0 );
@@ -41,22 +47,6 @@ moon.position.z = -20;
 skySystem.add( moon );
 skyObjects.push( moon );
 
-const loader = new GLTFLoader();
-loader.load( Star3Model, function ( gltf ) {
-    const desiredScale = 1.5;
-    for (let i = 0; i < 50; i++) {
-        const starClone = gltf.scene.clone();
-        starClone.scale.set(desiredScale, desiredScale, desiredScale);
-        starClone.position.set(Math.random() * 220 - 110, 
-            Math.random() * 220 - 110, Math.random() * 180 - 90);
-        starClone.rotation.x = Math.random() * 10;
-        skySystem.add( starClone );
-        skyObjects.push( starClone );
-    }
-}, undefined, function ( error ) {
-    console.error( error );
-});
-
 // Stars
 const starsGeo = new THREE.TetrahedronGeometry(0.2, 2);
 const starsSpace = 220;
@@ -79,3 +69,24 @@ for (let i = 0; i < 200; i++) {
     skySystem.add(star);
     skyObjects.push( star );
 }
+// load models
+const loader = new GLTFLoader();
+function loadStarModels(file) {
+    loader.load( file, function ( gltf ) {
+        const desiredScale = 1.2;
+        for (let i = 0; i < 10; i++) {
+            const starClone = gltf.scene.clone();
+            starClone.scale.set(desiredScale, desiredScale, desiredScale);
+            starClone.position.set(Math.random() * 220 - 110, 
+                Math.random() * 220 - 110, Math.random() * 180 - 60);
+            starClone.rotation.x = Math.random() * 10;
+            skySystem.add( starClone );
+            skyObjects.push( starClone );
+        }
+    }, undefined, function ( error ) {
+        console.error( error );
+    });
+}
+StarModels.forEach(model => {
+    loadStarModels(model);
+});
