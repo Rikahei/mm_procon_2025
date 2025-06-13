@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import Star4 from '../public/models/star4.glb';
-import StarK from '../public/models/star-K.glb';
+import StarK from '../public/models/star-K2.glb';
 import StarL from '../public/models/star-L.glb';
 import StarM from '../public/models/star-M.glb';
 import StarR from '../public/models/star-R.glb';

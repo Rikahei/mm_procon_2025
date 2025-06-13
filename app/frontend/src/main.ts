@@ -48,7 +48,7 @@ async function main (){
 		earth.position.y = -25;
 		earth.position.z = 10;
 		earth.rotation.y = Math.PI / 1;
-		earth.scale.set(1.2, 1.2, 1.2);
+		earth.scale.set(1.1, 1.1, 1.1);
 		scene.add( earth );
 	}, undefined, function ( error ) {
 		console.error( error );
