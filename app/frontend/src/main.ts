@@ -5,7 +5,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { skyObjects, skySystem } from "./skySystem";
 import { textGroup, textSystem, loadFont, createText, refreshText } from "./textSystem";
 import {THREE_GetGifTexture} from "threejs-gif-texture";
-import { Water } from 'three/addons/objects/Water2.js';
 import EarthModel from '../public/models/earth_sphere.glb';
 import MikuM1 from "../public/images/M1.gif";
 import MikuA1 from "../public/images/A1.gif";
@@ -49,7 +48,7 @@ async function main (){
 		earth.position.y = -25;
 		earth.position.z = 10;
 		earth.rotation.y = Math.PI / 1;
-		earth.scale.set(1.2, 1.2, 1.2);
+		earth.scale.set(1.1, 1.1, 1.1);
 		scene.add( earth );
 	}, undefined, function ( error ) {
 		console.error( error );
@@ -66,24 +65,6 @@ async function main (){
 		}
 		return needResize;
 	}
-
-	// water
-	const waterGeometry = new THREE.PlaneGeometry( 1000, 1000 );
-	let water = new Water(
-		waterGeometry,
-		{
-			textureWidth: 512,
-			textureHeight: 512,
-			color: 0xe8df61,
-			flowDirection: new THREE.Vector2( 1, 1),
-			scale: 4
-		}
-	);
-	water.rotation.x = 1.5;
-	water.position.x = 0;
-	water.position.y = -15;
-	water.position.z = 0;
-	scene.add( water );
 
 	// load the font
 	loadFont();
