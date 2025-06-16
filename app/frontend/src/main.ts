@@ -36,9 +36,9 @@ async function main (){
 	const scene = new THREE.Scene();
 	{
 		const color = 0xFFFFFF;
-		const intensity = 5;
+		const intensity = 1;
 		const light = new THREE.DirectionalLight( color, intensity );
-		light.position.set( 0, 3, 10 );
+		light.position.set( 0, 5, 20 );
 		scene.add( light );
 	}
 
