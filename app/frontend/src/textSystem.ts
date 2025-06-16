@@ -40,7 +40,7 @@ function createText (text, textMaterial) {
     textGeo.computeBoundingBox();
     const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
-    const tessellateModifier = new TessellateModifier( 8, 6 );
+    const tessellateModifier = new TessellateModifier( 2, 6 );
     textGeo = tessellateModifier.modify( textGeo );
 
 	const numFaces = textGeo.attributes.position.count / 3;
@@ -49,18 +49,18 @@ function createText (text, textMaterial) {
 	const color = new THREE.Color();
 	for ( let f = 0; f < numFaces; f ++ ) {
 		const index = 9 * f;
-		const h = 0.5 + 0.4 * Math.random();
-		const s = 0.5 + 0.2 * Math.random();
-		const l = 0.5 + 0.2 * Math.random();
+		const h = 2 * Math.random();
+		const s = 0.35 + Math.random();
+		const l = 0.5 + Math.random();
 		color.setHSL( h, s, l );
 		const d = 10 * ( 0.5 - Math.random() );
 		for ( let i = 0; i < 3; i ++ ) {
 			colors[ index + ( 3 * i ) ] = color.r;
 			colors[ index + ( 3 * i ) + 1 ] = color.g;
 			colors[ index + ( 3 * i ) + 2 ] = color.b;
-			displacement[ index + ( 3 * i ) ] = d;
-			displacement[ index + ( 3 * i ) + 1 ] = d;
-			displacement[ index + ( 3 * i ) + 2 ] = d;
+			displacement[ index + ( 3 * i ) + 10 ] = d;
+			displacement[ index + ( 3 * i ) + 30 ] = d;
+			displacement[ index + ( 3 * i ) + 10 ] = d;
 		}
 	}
 
