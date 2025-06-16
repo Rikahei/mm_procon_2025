@@ -1,10 +1,16 @@
 import { player, video } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import {THREE_GetGifTexture} from "threejs-gif-texture";
 import { skyObjects, skySystem } from "./skySystem";
 import { textGroup, textSystem, loadFont, createText, refreshText } from "./textSystem";
-import {THREE_GetGifTexture} from "threejs-gif-texture";
+
 import EarthModel from '../public/models/earth_sphere.glb';
 import MikuM1 from "../public/images/M1.gif";
 import MikuA1 from "../public/images/A1.gif";
@@ -62,6 +68,8 @@ async function main (){
 		const needResize = canvas.width !== width || canvas.height !== height;
 		if ( needResize ) {
 			renderer.setSize( width, height, false );
+			bloomComposer.setSize( width, height );
+			finalComposer.setSize( width, height );
 		}
 		return needResize;
 	}
@@ -72,10 +80,10 @@ async function main (){
 	let playerPosition, meshControl, charPosition, fixPosition = 0;
 
 	// Set materials
-	let shaderMaterial = new THREE.ShaderMaterial( {
+	const shaderMaterial = new THREE.ShaderMaterial( {
 		uniforms: { amplitude: { value: 0.0 } },
-		vertexShader: document.getElementById( 'vertexshader' ).textContent,
-		fragmentShader: document.getElementById( 'fragmentshader' ).textContent
+		vertexShader: document.getElementById( 'vertexText' ).textContent,
+		fragmentShader: document.getElementById( 'fragmentText' ).textContent
 	} );
 	// set moveing material
 	let movingMaterial = shaderMaterial.clone();
@@ -97,6 +105,64 @@ async function main (){
 	    scene.add(theMiku)
 	});
 
+	// Blooming filter
+	const BLOOM_SCENE = 1;
+	const bloomLayer = new THREE.Layers();
+	bloomLayer.set( BLOOM_SCENE );
+	scene.traverse( disposeMaterial );
+
+	const renderScene = new RenderPass( scene, camera );
+	const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+	bloomPass.threshold = 0;
+	bloomPass.strength = 0.8;
+	bloomPass.radius = 0.25;
+
+	const bloomComposer = new EffectComposer( renderer );
+	bloomComposer.renderToScreen = false;
+	bloomComposer.addPass( renderScene );
+	bloomComposer.addPass( bloomPass );
+
+	const mixPass = new ShaderPass(
+		new THREE.ShaderMaterial( {
+			uniforms: {
+				baseTexture: { value: null },
+				bloomTexture: { value: bloomComposer.renderTarget2.texture }
+			},
+			vertexShader: document.getElementById( 'vertexshader' ).textContent,
+			fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+			defines: {}
+		} ), 'baseTexture'
+	);
+	mixPass.needsSwap = true;
+
+	const outputPass = new OutputPass();
+	const finalComposer = new EffectComposer( renderer );
+	finalComposer.addPass( renderScene );
+	finalComposer.addPass( mixPass );
+	finalComposer.addPass( outputPass );
+
+	// Blooming functions
+	const darkMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
+	const materials = {};
+	function disposeMaterial( obj ) {
+		if ( obj.material ) {
+			obj.material.dispose();
+		}
+	}
+	function darkenNonBloomed( obj ) {
+		if ( obj.isMesh && bloomLayer.test( obj.layers ) === false ) {
+				materials[ obj.uuid ] = obj.material;
+				obj.material = darkMaterial;
+			}
+	}
+	function restoreMaterial( obj ) {
+		if ( materials[ obj.uuid ] && bloomLayer.test( obj.layers ) === false) {
+			obj.material = materials[ obj.uuid ];
+			delete materials[ obj.uuid ];
+		}
+	}
+
+	// Rendering
 	function render( time ) {
 		const canvas = renderer.domElement;
 		time *= 0.001;
@@ -163,9 +229,15 @@ async function main (){
 			}
 		}
 		textSystem.add(textGroup);
-		renderer.render( scene, camera );
+		// Blooming filter
+		scene.traverse( darkenNonBloomed );
+		bloomComposer.render();
+		scene.traverse( restoreMaterial );
+		finalComposer.render();
+
 		requestAnimationFrame( render );
 	}
+
 	requestAnimationFrame( render );
 }
 main();
