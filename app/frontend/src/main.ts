@@ -13,10 +13,9 @@ import { textGroup, textSystem, loadFont, createText, textPositionHelper, refres
 
 import EarthModel from '../public/models/earth_sphere.glb';
 import MikuM1 from "../public/images/M1.gif";
+import MikuM3 from "../public/images/M3.gif";
 import MikuA1 from "../public/images/A1.gif";
 import MikuWW from "../public/images/WW.gif";
-
-const mikuRandom = [MikuM1, MikuA1, MikuWW];
 
 async function main (){
   	// load text-alive player
@@ -59,26 +58,10 @@ async function main (){
 	}, undefined, function ( error ) {
 		console.error( error );
 	});
-	
-	function resizeRendererToDisplaySize( renderer ) {
-		const canvas = renderer.domElement;
-		const pixelRatio = window.devicePixelRatio;
-		const width = Math.floor( canvas.clientWidth * pixelRatio );
-		const height = Math.floor( canvas.clientHeight * pixelRatio );
-		const needResize = canvas.width !== width || canvas.height !== height;
-		if ( needResize ) {
-			renderer.setSize( width, height, false );
-			bloomComposer.setSize( width, height );
-			finalComposer.setSize( width, height );
-		}
-		return needResize;
-	}
 
-	// load the font
-	loadFont();
 	const textScaleIndex = 5;
-	let char, lastChar, phrase, lastPhrase, charTemp, charFix = undefined;
-	let lastCharStartTime, playerPosition, meshControl, charIndex = 0;
+	let char, theMiku, phrase, lastPhrase, charTemp, charFix = undefined;
+	let lastCharStartTime, playerPosition, meshControl, charIndex, mikuSinging = 0;
 
 	// Set materials
 	const shaderMaterial = new THREE.ShaderMaterial( {
@@ -89,22 +72,6 @@ async function main (){
 	// set moveing material
 	let movingMaterial = shaderMaterial.clone();
 	movingMaterial.uniforms.amplitude.value = 1;
-
-	// Load Miku
-	let theMiku = undefined
-	THREE_GetGifTexture(mikuRandom[Math.floor(Math.random() * mikuRandom.length)]).then( texture => { 
-		texture.colorSpace = THREE.SRGBColorSpace;
-	    theMiku = new THREE.Mesh( 
-	        new THREE.PlaneGeometry(20, 20), 
-	        new THREE.MeshBasicMaterial({ 
-				map: texture,
-				transparent: true,
-				opacity: 1
-			}));
-		theMiku.position.z = 20;
-		theMiku.scale.set(0.5, 0.5, 0.5);
-	    scene.add(theMiku)
-	});
 
 	// Blooming filter
 	const BLOOM_SCENE = 1;
@@ -163,6 +130,40 @@ async function main (){
 		}
 	}
 
+	// Load Miku
+	let mikuMaterial = new THREE.MeshBasicMaterial({
+		transparent: true,
+		opacity: 0.9,
+	});
+	theMiku = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), mikuMaterial);
+	theMiku.position.z = 20;
+	theMiku.scale.set(0.5, 0.5, 0.5);
+	scene.add(theMiku)
+
+	function loadMiku(mikuStatus = 0) {
+		const mikuArr = [MikuM1, MikuM3, MikuWW];
+		THREE_GetGifTexture(mikuArr[mikuStatus]).then( texture => { 
+			texture.colorSpace = THREE.SRGBColorSpace;
+			mikuMaterial.needsUpdate = true;
+	    	mikuMaterial.map = texture;
+		});
+		mikuSinging = mikuStatus == 1 ? 1 : 0;
+	}
+
+	function resizeRendererToDisplaySize( renderer ) {
+		const canvas = renderer.domElement;
+		const pixelRatio = window.devicePixelRatio;
+		const width = Math.floor( canvas.clientWidth * pixelRatio );
+		const height = Math.floor( canvas.clientHeight * pixelRatio );
+		const needResize = canvas.width !== width || canvas.height !== height;
+		if ( needResize ) {
+			renderer.setSize( width, height, false );
+			bloomComposer.setSize( width, height );
+			finalComposer.setSize( width, height );
+		}
+		return needResize;
+	}
+
 	// Rendering
 	function render( time ) {
 		const canvas = renderer.domElement;
@@ -192,7 +193,7 @@ async function main (){
 			// If position reach char time...
 			if( char != null &&
 				char.startTime < playerPosition && playerPosition < char.endTime 
-				&& lastCharStartTime != char.startTime	
+				&& lastCharStartTime != char.startTime
 			){
 				// Replace char with no animation
 				if(charTemp || !lastCharStartTime){
@@ -215,7 +216,7 @@ async function main (){
 				charIndex = charIndex + 1;
 			}
 			// text animation control
-			if(meshControl >= 0.02){
+			if(meshControl >= 0.02 && phrase ){
 				meshControl = (phrase.endTime - playerPosition) / 5000;
 				movingMaterial.uniforms.amplitude.value = meshControl;
 			}else{
@@ -229,7 +230,13 @@ async function main (){
 				lastPhrase = phrase.text;
 				refreshText();
 				charIndex = 0;
-				console.log(canvas.width, canvas.height);
+			}
+
+			if( player.isPlaying == false && playerPosition < 1){
+				if(mikuSinging) loadMiku(2);
+				refreshText();
+			} else {
+				if(!mikuSinging) loadMiku(1);
 			}
 		}
 		textSystem.add(textGroup);
@@ -243,7 +250,9 @@ async function main (){
 
 		requestAnimationFrame( render );
 	}
-
+	// load the font
+	loadFont();
+	loadMiku();
 	requestAnimationFrame( render );
 }
 main();
