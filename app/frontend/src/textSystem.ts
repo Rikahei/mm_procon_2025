@@ -5,7 +5,7 @@ import MplusRouned1cMedium from '../public/fonts/MPLUSRounded1c-Medium.ttf';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
 
-export { textSystem, textGroup, loadFont, createText, refreshText};
+export { textSystem, textGroup, loadFont, createText, textPositionHelper, refreshText};
 
 const zodiacObjects = [];
 let font, mestText;
@@ -24,10 +24,10 @@ function loadFont() {
     } );
 }
 
-function createText (text, textMaterial) {
+function createText (text, textMaterial, fontScale = 0.1) {
     const props = {
       font,
-      size: 3.5,
+      size: 10,
       depth: 1,
       curveSegments: 5,
       bevelEnabled: true,
@@ -38,9 +38,9 @@ function createText (text, textMaterial) {
     };
     let textGeo = new TextGeometry(text, props);
     textGeo.computeBoundingBox();
-    const centerOffset = - 0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+    textGeo.center();
 
-    const tessellateModifier = new TessellateModifier( 2, 6 );
+    const tessellateModifier = new TessellateModifier( 2, 4 );
     textGeo = tessellateModifier.modify( textGeo );
 
 	const numFaces = textGeo.attributes.position.count / 3;
@@ -53,14 +53,14 @@ function createText (text, textMaterial) {
 		const s = 0.35 + Math.random();
 		const l = 0.5 + Math.random();
 		color.setHSL( h, s, l );
-		const d = 10 * ( 0.5 - Math.random() );
+		const d = 50 * ( 0.5 - Math.random() );
 		for ( let i = 0; i < 3; i ++ ) {
 			colors[ index + ( 3 * i ) ] = color.r;
 			colors[ index + ( 3 * i ) + 1 ] = color.g;
 			colors[ index + ( 3 * i ) + 2 ] = color.b;
-			displacement[ index + ( 3 * i ) + 10 ] = d;
-			displacement[ index + ( 3 * i ) + 30 ] = d;
-			displacement[ index + ( 3 * i ) + 10 ] = d;
+			displacement[ index + ( 3 * i ) ] = d;
+			displacement[ index + ( 3 * i ) + 1 ] = d;
+			displacement[ index + ( 3 * i ) + 2 ] = d;
 		}
 	}
 
@@ -68,8 +68,17 @@ function createText (text, textMaterial) {
 	textGeo.setAttribute( 'displacement', new THREE.BufferAttribute( displacement, 3 ) );
 
     mestText = new THREE.Mesh( textGeo, textMaterial );
-    mestText.position.y = 10;
+    mestText.scale.set(fontScale, fontScale, fontScale);
     return mestText;
+}
+
+function textPositionHelper (char, charIndex, charCount, deg = 8) {
+    const radius = 45
+    const degreesToRads = ( ( (charIndex * deg) - ( ( (charCount - 1) * deg) / 2) ) * Math.PI ) / 180;
+    let x = radius * Math.sin(degreesToRads);
+    let y = radius * Math.cos(degreesToRads);
+    char.position.x = x;
+    char.position.y = y - 25;
 }
 
 function refreshText() {

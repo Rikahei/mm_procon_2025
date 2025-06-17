@@ -9,7 +9,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import {THREE_GetGifTexture} from "threejs-gif-texture";
 import { skyObjects, skySystem } from "./skySystem";
-import { textGroup, textSystem, loadFont, createText, refreshText } from "./textSystem";
+import { textGroup, textSystem, loadFont, createText, textPositionHelper, refreshText } from "./textSystem";
 
 import EarthModel from '../public/models/earth_sphere.glb';
 import MikuM1 from "../public/images/M1.gif";
@@ -36,7 +36,7 @@ async function main (){
 	const scene = new THREE.Scene();
 	{
 		const color = 0xFFFFFF;
-		const intensity = 1;
+		const intensity = 2;
 		const light = new THREE.DirectionalLight( color, intensity );
 		light.position.set( 0, 5, 20 );
 		scene.add( light );
@@ -76,8 +76,9 @@ async function main (){
 
 	// load the font
 	loadFont();
+	const textScaleIndex = 5;
 	let char, lastChar, phrase, lastPhrase, charTemp, charFix = undefined;
-	let playerPosition, meshControl, charPosition, fixPosition = 0;
+	let playerPosition, meshControl, charIndex = 0;
 
 	// Set materials
 	const shaderMaterial = new THREE.ShaderMaterial( {
@@ -142,7 +143,7 @@ async function main (){
 	finalComposer.addPass( outputPass );
 
 	// Blooming functions
-	const darkMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
+	const darkMaterial = new THREE.MeshBasicMaterial( { color: 0x000000 } );
 	const materials = {};
 	function disposeMaterial( obj ) {
 		if ( obj.material ) {
@@ -180,7 +181,7 @@ async function main (){
 			obj.rotation.z = time * 0.1;
 		} );
 		if(theMiku) {
-			theMiku.position.y = 1 + Math.sin( time * 0.5 );
+			theMiku.position.y = -1 + Math.sin( time * 0.5 );
 			theMiku.rotation.y = Math.sin( time * 0.5 ) / 3;
 		}
 		// Set player video
@@ -196,19 +197,22 @@ async function main (){
 				// Replace char with no animation
 				if(charTemp || !lastChar){
 					textGroup.remove(charTemp);
-					charFix = createText(char.text, shaderMaterial);
-					charFix.position.x = fixPosition;
+					charFix = createText(char.text, shaderMaterial, ( (canvas.width / canvas.height ) / textScaleIndex ) );
+					textPositionHelper(charFix, charIndex, phrase.charCount, (  
+						(canvas.width / canvas.height ) * textScaleIndex - 0.8 ) 
+					);
 					textGroup.add(charFix);
-					fixPosition = fixPosition + 5;
 				}
 				// Update lastChar
 				lastChar = char.text;
 				// Add char with animation
-				charTemp = createText(char.text, movingMaterial);
-				charTemp.position.x = charPosition;
+				charTemp = createText(char.text, movingMaterial, ( (canvas.width / canvas.height ) / textScaleIndex ) );
 				textGroup.add(charTemp);
-				charPosition = charPosition + 5;
+				textPositionHelper(charTemp, charIndex, phrase.charCount, ( 
+					(canvas.width / canvas.height ) * textScaleIndex - 0.8 ) 
+				);
 				meshControl = 100 * Math.random();
+				charIndex = charIndex + 1;
 			}
 			// text animation control
 			if(meshControl >= 0.02){
@@ -224,14 +228,16 @@ async function main (){
 			){
 				lastPhrase = phrase.text;
 				refreshText();
-				charPosition = -Math.abs( (phrase.charCount / canvas.clientWidth) * 1000 * 3 + 2 );
-				fixPosition = -Math.abs( (phrase.charCount / canvas.clientWidth) * 1000 * 3 + 2 );
+				charIndex = 0;
+				console.log(canvas.width, canvas.height);
 			}
 		}
 		textSystem.add(textGroup);
 		// Blooming filter
 		scene.traverse( darkenNonBloomed );
+		renderer.setClearColor( 0x000000 );
 		bloomComposer.render();
+		renderer.setClearColor( 0x000005 );
 		scene.traverse( restoreMaterial );
 		finalComposer.render();
 
