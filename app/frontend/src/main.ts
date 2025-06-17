@@ -78,7 +78,7 @@ async function main (){
 	loadFont();
 	const textScaleIndex = 5;
 	let char, lastChar, phrase, lastPhrase, charTemp, charFix = undefined;
-	let playerPosition, meshControl, charIndex = 0;
+	let lastCharStartTime, playerPosition, meshControl, charIndex = 0;
 
 	// Set materials
 	const shaderMaterial = new THREE.ShaderMaterial( {
@@ -192,10 +192,10 @@ async function main (){
 			// If position reach char time...
 			if( char != null &&
 				char.startTime < playerPosition && playerPosition < char.endTime 
-				&& lastChar != char.text	
+				&& lastCharStartTime != char.startTime	
 			){
 				// Replace char with no animation
-				if(charTemp || !lastChar){
+				if(charTemp || !lastCharStartTime){
 					textGroup.remove(charTemp);
 					charFix = createText(char.text, shaderMaterial, ( (canvas.width / canvas.height ) / textScaleIndex ) );
 					textPositionHelper(charFix, charIndex, phrase.charCount, (  
@@ -204,7 +204,7 @@ async function main (){
 					textGroup.add(charFix);
 				}
 				// Update lastChar
-				lastChar = char.text;
+				lastCharStartTime = char.startTime;
 				// Add char with animation
 				charTemp = createText(char.text, movingMaterial, ( (canvas.width / canvas.height ) / textScaleIndex ) );
 				textGroup.add(charTemp);
