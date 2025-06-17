@@ -76,6 +76,7 @@ async function main (){
 
 	// load the font
 	loadFont();
+	const textScaleIndex = 5;
 	let char, lastChar, phrase, lastPhrase, charTemp, charFix = undefined;
 	let playerPosition, meshControl, charIndex = 0;
 
@@ -142,7 +143,7 @@ async function main (){
 	finalComposer.addPass( outputPass );
 
 	// Blooming functions
-	const darkMaterial = new THREE.MeshBasicMaterial( { color: 'black' } );
+	const darkMaterial = new THREE.MeshBasicMaterial( { color: 0x000000 } );
 	const materials = {};
 	function disposeMaterial( obj ) {
 		if ( obj.material ) {
@@ -196,16 +197,20 @@ async function main (){
 				// Replace char with no animation
 				if(charTemp || !lastChar){
 					textGroup.remove(charTemp);
-					charFix = createText(char.text, shaderMaterial);
-					textPositionHelper(charFix, charIndex, phrase.charCount);
+					charFix = createText(char.text, shaderMaterial, ( (canvas.width / canvas.height ) / textScaleIndex ) );
+					textPositionHelper(charFix, charIndex, phrase.charCount, (  
+						(canvas.width / canvas.height ) * textScaleIndex - 0.8 ) 
+					);
 					textGroup.add(charFix);
 				}
 				// Update lastChar
 				lastChar = char.text;
 				// Add char with animation
-				charTemp = createText(char.text, movingMaterial);
+				charTemp = createText(char.text, movingMaterial, ( (canvas.width / canvas.height ) / textScaleIndex ) );
 				textGroup.add(charTemp);
-				textPositionHelper(charTemp, charIndex, phrase.charCount);
+				textPositionHelper(charTemp, charIndex, phrase.charCount, ( 
+					(canvas.width / canvas.height ) * textScaleIndex - 0.8 ) 
+				);
 				meshControl = 100 * Math.random();
 				charIndex = charIndex + 1;
 			}
@@ -224,12 +229,15 @@ async function main (){
 				lastPhrase = phrase.text;
 				refreshText();
 				charIndex = 0;
+				console.log(canvas.width, canvas.height);
 			}
 		}
 		textSystem.add(textGroup);
 		// Blooming filter
 		scene.traverse( darkenNonBloomed );
+		renderer.setClearColor( 0x000000 );
 		bloomComposer.render();
+		renderer.setClearColor( 0x000005 );
 		scene.traverse( restoreMaterial );
 		finalComposer.render();
 

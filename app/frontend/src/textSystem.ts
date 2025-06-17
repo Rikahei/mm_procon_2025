@@ -24,10 +24,10 @@ function loadFont() {
     } );
 }
 
-function createText (text, textMaterial) {
+function createText (text, textMaterial, fontScale = 0.1) {
     const props = {
       font,
-      size: 3,
+      size: 10,
       depth: 1,
       curveSegments: 5,
       bevelEnabled: true,
@@ -53,7 +53,7 @@ function createText (text, textMaterial) {
 		const s = 0.35 + Math.random();
 		const l = 0.5 + Math.random();
 		color.setHSL( h, s, l );
-		const d = 10 * ( 0.5 - Math.random() );
+		const d = 50 * ( 0.5 - Math.random() );
 		for ( let i = 0; i < 3; i ++ ) {
 			colors[ index + ( 3 * i ) ] = color.r;
 			colors[ index + ( 3 * i ) + 1 ] = color.g;
@@ -68,11 +68,12 @@ function createText (text, textMaterial) {
 	textGeo.setAttribute( 'displacement', new THREE.BufferAttribute( displacement, 3 ) );
 
     mestText = new THREE.Mesh( textGeo, textMaterial );
-    // mestText.position.y = 50;
+    mestText.scale.set(fontScale, fontScale, fontScale);
     return mestText;
 }
 
-function textPositionHelper (char, charIndex, charCount, radius = 45, deg = 6) {
+function textPositionHelper (char, charIndex, charCount, deg = 8) {
+    const radius = 45
     const degreesToRads = ( ( (charIndex * deg) - ( ( (charCount - 1) * deg) / 2) ) * Math.PI ) / 180;
     let x = radius * Math.sin(degreesToRads);
     let y = radius * Math.cos(degreesToRads);
