@@ -9,6 +9,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import {THREE_GetGifTexture} from "threejs-gif-texture";
 import { skyObjects, skySystem } from "./skySystem";
+import { acceObjects, acceSystem } from './acceSystem';
 import { textGroup, textSystem, loadFont, createText, textPositionHelper, refreshText } from "./textSystem";
 
 import EarthModel from '../public/models/earth_sphere.glb';
@@ -37,11 +38,14 @@ async function main (){
 		const color = 0xFFFFFF;
 		const intensity = 2;
 		const light = new THREE.DirectionalLight( color, intensity );
+		const backLight = new THREE.DirectionalLight( color, 0.5 );
 		light.position.set( 0, 5, 20 );
+		backLight.position.set( 0, -50, -150 );
 		scene.add( light );
 	}
 
 	scene.add( skySystem );
+	scene.add( acceSystem );
 	scene.add( textSystem );
 
 	// earth
@@ -51,7 +55,7 @@ async function main (){
 		earth = gltf.scene;
 		earth.position.x = 0;
 		earth.position.y = -25;
-		earth.position.z = 10;
+		earth.position.z = 15;
 		earth.rotation.y = Math.PI / 1;
 		earth.scale.set(1.1, 1.1, 1.1);
 		scene.add( earth );
@@ -179,8 +183,10 @@ async function main (){
 		}
 		// skyObject rotations
 		skyObjects.forEach( ( obj ) => {
-			obj.rotation.z = time * 0.1;
+			obj.rotation.z = time * 0.02;
 		} );
+		acceSystem.rotation.z = time * -0.05;
+
 		if(theMiku) {
 			theMiku.position.x = Math.sin( time * 0.2 ) * 8;
 			theMiku.position.y = -1 + ( Math.sin( time * 0.5 ) * 2);
