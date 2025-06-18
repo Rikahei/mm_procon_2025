@@ -32,7 +32,7 @@ skyObjects.push( skySystem );
 // 	const starBackground = new THREE.Mesh(backGeo, material);
 // 	starBackground.rotation.x = 100;
 // 	starBackground.position.y = -65;
-// 	starBackground.position.z = -100;
+// 	starBackground.position.z = -200;
 // 	starBackground.rotation.x = Math.PI / 2;
 // 	skySystem.add(starBackground);
 // });
