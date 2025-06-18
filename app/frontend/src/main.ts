@@ -182,8 +182,9 @@ async function main (){
 			obj.rotation.z = time * 0.1;
 		} );
 		if(theMiku) {
-			theMiku.position.y = -1 + Math.sin( time * 0.5 );
-			theMiku.rotation.y = Math.sin( time * 0.5 ) / 3;
+			theMiku.position.x = Math.sin( time * 0.2 ) * 8;
+			theMiku.position.y = -1 + ( Math.sin( time * 0.5 ) * 2);
+			theMiku.rotation.y = Math.sin( time * 0.5 ) / 5;
 		}
 		// Set player video
 		if(player.video) {
@@ -231,7 +232,7 @@ async function main (){
 				refreshText();
 				charIndex = 0;
 			}
-
+			// Miku changes
 			if( player.isPlaying == false && playerPosition < 1){
 				if(mikuSinging) loadMiku(2);
 				refreshText();
