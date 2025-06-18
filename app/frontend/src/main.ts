@@ -13,10 +13,9 @@ import { acceObjects, acceSystem } from './acceSystem';
 import { textGroup, textSystem, loadFont, createText, textPositionHelper, refreshText } from "./textSystem";
 
 import EarthModel from '../public/models/earth_sphere.glb';
-import MikuM1 from "../public/images/M1.gif";
+import MikuM11 from "../public/images/M11.gif";
 import MikuM3 from "../public/images/M3.gif";
-import MikuA1 from "../public/images/A1.gif";
-import MikuWW from "../public/images/WW.gif";
+import MikuW2 from "../public/images/W2.gif";
 
 async function main (){
   	// load text-alive player
@@ -145,7 +144,7 @@ async function main (){
 	scene.add(theMiku)
 
 	function loadMiku(mikuStatus = 0) {
-		const mikuArr = [MikuM1, MikuM3, MikuWW];
+		const mikuArr = [MikuM11, MikuM3, MikuW2];
 		THREE_GetGifTexture(mikuArr[mikuStatus]).then( texture => { 
 			texture.colorSpace = THREE.SRGBColorSpace;
 			mikuMaterial.needsUpdate = true;
