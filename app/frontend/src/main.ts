@@ -13,9 +13,9 @@ import { acceSystem } from './acceSystem';
 import { textGroup, textSystem, loadFont, createText, textPositionHelper, refreshText } from "./textSystem";
 
 import EarthModel from '../public/models/earth_sphere.glb';
-import MikuM1 from "../public/images/M1.gif";
+import MikuM11 from "../public/images/M11.gif";
 import MikuM3 from "../public/images/M3.gif";
-import MikuWW from "../public/images/WW.gif";
+import MikuW2 from "../public/images/W2.gif";
 
 async function main (){
   	// load text-alive player
