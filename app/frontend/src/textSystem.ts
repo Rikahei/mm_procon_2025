@@ -1,7 +1,6 @@
 import * as THREE from 'three';
-import { TTFLoader } from "three/addons/loaders/TTFLoader.js";
-import { Font } from 'three/addons/loaders/FontLoader.js';
-import MplusRouned1cMedium from '../public/fonts/MPLUSRounded1c-Medium.ttf';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import DotGothic16 from '../public/fonts/DotGothic16-Regular.typeface.json?url';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
 
@@ -14,12 +13,12 @@ const textGroup = new THREE.Group();
 const textSystem = new THREE.Object3D();
 zodiacObjects.push( textSystem );
 
-const loader = new TTFLoader();
+const loader = new FontLoader();
 let message = 'マジカルミライ２０２５';
 
 function loadFont() {
-    loader.load( MplusRouned1cMedium, function ( response ) { 
-        font = new Font(response);
+    loader.load(DotGothic16, function ( response ) {
+        font = response;
         refreshText(message);
     } );
 }
