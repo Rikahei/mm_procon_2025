@@ -9,7 +9,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import {THREE_GetGifTexture} from "threejs-gif-texture";
 import { skyObjects, skySystem } from "./skySystem";
-import { acceObjects, acceSystem } from './acceSystem';
+import { acceSystem } from './acceSystem';
 import { textGroup, textSystem, loadFont, createText, textPositionHelper, refreshText } from "./textSystem";
 
 import EarthModel from '../public/models/earth_sphere.glb';
@@ -36,21 +36,23 @@ async function main (){
 	{
 		const color = 0xFFFFFF;
 		const intensity = 2;
-		const light = new THREE.DirectionalLight( color, intensity );
+		const frontLight = new THREE.DirectionalLight( color, intensity );
 		const backLight = new THREE.DirectionalLight( color, 0.5 );
-		light.position.set( 0, 5, 20 );
+		frontLight.position.set( 0, 5, 20 );
 		backLight.position.set( 0, -50, -150 );
-		scene.add( light );
+		scene.add( frontLight, backLight );
 	}
 
 	scene.add( skySystem );
 	scene.add( acceSystem );
 	scene.add( textSystem );
 
-	// earth
-	let earth = undefined
-	const gLoader = new GLTFLoader();
-	gLoader.load( EarthModel, function ( gltf ) {
+	let earth, theMiku, char, phrase, lastPhrase, charTemp, charFix = undefined;
+	let lastCharStartTime, playerPosition, meshControl, charIndex, mikuSinging, screenRatio = 0;
+
+	// Load earth
+	const modelLoader = new GLTFLoader();
+	modelLoader.load( EarthModel, function ( gltf ) {
 		earth = gltf.scene;
 		earth.position.x = 0;
 		earth.position.y = -25;
@@ -62,9 +64,27 @@ async function main (){
 		console.error( error );
 	});
 
-	const textScaleIndex = 5;
-	let char, theMiku, phrase, lastPhrase, charTemp, charFix = undefined;
-	let lastCharStartTime, playerPosition, meshControl, charIndex, mikuSinging = 0;
+	// Load Miku
+	let mikuMaterial = new THREE.MeshBasicMaterial({
+		transparent: true,
+		opacity: 1,
+	});
+	theMiku = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), mikuMaterial);
+	theMiku.position.z = 20;
+	theMiku.scale.set(0.6, 0.6, 0.6);
+	scene.add(theMiku)
+
+	function loadMiku(mikuStatus = 0) {
+		const mikuArr = [MikuM1, MikuM3, MikuWW];
+		THREE_GetGifTexture(mikuArr[mikuStatus]).then( texture => { 
+			texture.colorSpace = THREE.SRGBColorSpace;
+			mikuMaterial.needsUpdate = true;
+	    	mikuMaterial.map = texture;
+		});
+		mikuSinging = mikuStatus == 1 ? 1 : 0;
+	}
+
+	let textScaleIndex = 5;
 
 	// Set materials
 	const shaderMaterial = new THREE.ShaderMaterial( {
@@ -158,6 +178,7 @@ async function main (){
 		const pixelRatio = window.devicePixelRatio;
 		const width = Math.floor( canvas.clientWidth * pixelRatio );
 		const height = Math.floor( canvas.clientHeight * pixelRatio );
+		screenRatio = canvas.width / canvas.height;
 		const needResize = canvas.width !== width || canvas.height !== height;
 		if ( needResize ) {
 			renderer.setSize( width, height, false );
@@ -189,7 +210,7 @@ async function main (){
 		if(theMiku) {
 			theMiku.position.x = Math.sin( time * 0.2 ) * 8;
 			theMiku.position.y = -1 + ( Math.sin( time * 0.5 ) * 2);
-			theMiku.rotation.y = Math.sin( time * 0.5 ) / 5;
+			theMiku.rotation.y = Math.sin( time * 0.5 ) / 6;
 		}
 		// Set player video
 		if(player.video) {
@@ -204,19 +225,19 @@ async function main (){
 				// Replace char with no animation
 				if(charTemp || !lastCharStartTime){
 					textGroup.remove(charTemp);
-					charFix = createText(char.text, shaderMaterial, ( (canvas.width / canvas.height ) / textScaleIndex ) );
+					charFix = createText(char.text, shaderMaterial, ( screenRatio / textScaleIndex ) );
 					textPositionHelper(charFix, charIndex, phrase.charCount, (  
-						(canvas.width / canvas.height ) * textScaleIndex - 0.8 ) 
+						screenRatio * textScaleIndex - 0.8 ) 
 					);
 					textGroup.add(charFix);
 				}
 				// Update lastChar
 				lastCharStartTime = char.startTime;
 				// Add char with animation
-				charTemp = createText(char.text, movingMaterial, ( (canvas.width / canvas.height ) / textScaleIndex ) );
+				charTemp = createText(char.text, movingMaterial, ( screenRatio / textScaleIndex ) );
 				textGroup.add(charTemp);
 				textPositionHelper(charTemp, charIndex, phrase.charCount, ( 
-					(canvas.width / canvas.height ) * textScaleIndex - 0.8 ) 
+					screenRatio * textScaleIndex - 0.8 ) 
 				);
 				meshControl = 100 * Math.random();
 				charIndex = charIndex + 1;
