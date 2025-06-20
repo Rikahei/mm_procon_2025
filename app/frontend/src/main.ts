@@ -69,7 +69,7 @@ async function main (){
 		transparent: true,
 		opacity: 1,
 	});
-	theMiku = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), mikuMaterial);
+	theMiku = new THREE.Mesh(new THREE.CircleGeometry(10, 20), mikuMaterial);
 	theMiku.position.z = 20;
 	theMiku.scale.set(0.6, 0.6, 0.6);
 	scene.add(theMiku)
@@ -105,7 +105,7 @@ async function main (){
 	const renderScene = new RenderPass( scene, camera );
 	const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
 	bloomPass.threshold = 0;
-	bloomPass.strength = 0.8;
+	bloomPass.strength = 0.55;
 	bloomPass.radius = 0.25;
 
 	const bloomComposer = new EffectComposer( renderer );
@@ -225,7 +225,7 @@ async function main (){
 				// Replace char with no animation
 				if(charTemp || !lastCharStartTime){
 					textGroup.remove(charTemp);
-					charFix = createText(char.text, shaderMaterial, ( screenRatio / textScaleIndex ) );
+					charFix = createText(char.text, shaderMaterial, ( screenRatio / textScaleIndex ), 1 );
 					textPositionHelper(charFix, charIndex, phrase.charCount, (  
 						screenRatio * textScaleIndex - 0.8 ) 
 					);
@@ -234,17 +234,21 @@ async function main (){
 				// Update lastChar
 				lastCharStartTime = char.startTime;
 				// Add char with animation
-				charTemp = createText(char.text, movingMaterial, ( screenRatio / textScaleIndex ) );
+				charTemp = createText(char.text, movingMaterial, ( screenRatio / textScaleIndex ), 0 );
 				textGroup.add(charTemp);
 				textPositionHelper(charTemp, charIndex, phrase.charCount, ( 
 					screenRatio * textScaleIndex - 0.8 ) 
 				);
-				meshControl = 100 * Math.random();
+				meshControl = 100;
+				// disable layer for last Char in textgroup
+				if(textGroup.children[charIndex - 1]) {
+					textGroup.children[charIndex - 1].layers.disable(1);
+				}
 				charIndex = charIndex + 1;
 			}
 			// text animation control
-			if(meshControl >= 0.02 && phrase ){
-				meshControl = (phrase.endTime - playerPosition) / 5000;
+			if(meshControl >= 0.1 && phrase ){
+				meshControl -= 0.1;
 				movingMaterial.uniforms.amplitude.value = meshControl;
 			}else{
 				movingMaterial.uniforms.amplitude.value = 0;
