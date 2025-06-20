@@ -75,7 +75,7 @@ async function main (){
 	scene.add(theMiku)
 
 	function loadMiku(mikuStatus = 0) {
-		const mikuArr = [MikuM1, MikuM3, MikuWW];
+		const mikuArr = [MikuM11, MikuM3, MikuW2];
 		THREE_GetGifTexture(mikuArr[mikuStatus]).then( texture => { 
 			texture.colorSpace = THREE.SRGBColorSpace;
 			mikuMaterial.needsUpdate = true;
