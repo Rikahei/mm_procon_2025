@@ -23,15 +23,15 @@ function loadFont() {
     } );
 }
 
-function createText (text, textMaterial, fontScale = 0.1) {
+function createText (text, textMaterial, fontScale = 0.1, isFix = 1) {
     const props = {
       font,
       size: 10,
       depth: 1,
       curveSegments: 5,
       bevelEnabled: true,
-      bevelThickness: 0.08,
-      bevelSize: 0.01,
+      bevelThickness: 0.2,
+      bevelSize: 0.1,
       bevelOffset: 0,
       bevelSegments: 3,
     };
@@ -39,10 +39,10 @@ function createText (text, textMaterial, fontScale = 0.1) {
     textGeo.computeBoundingBox();
     textGeo.center();
 
-    const tessellateModifier = new TessellateModifier( 2, 4 );
+    const tessellateModifier = new TessellateModifier( 3, 4 );
     textGeo = tessellateModifier.modify( textGeo );
 
-	const numFaces = textGeo.attributes.position.count / 3;
+	const numFaces = textGeo.attributes.position.count / 3
 	const colors = new Float32Array( numFaces * 3 * 3 );
 	const displacement = new Float32Array( numFaces * 3 * 3 );
 	const color = new THREE.Color();
@@ -52,13 +52,13 @@ function createText (text, textMaterial, fontScale = 0.1) {
 		const s = 0.35 + Math.random();
 		const l = 0.5 + Math.random();
 		color.setHSL( h, s, l );
-		const d = 50 * ( 0.5 - Math.random() );
+		const d = 10 * ( 0.5 - Math.random() );
 		for ( let i = 0; i < 3; i ++ ) {
 			colors[ index + ( 3 * i ) ] = color.r;
 			colors[ index + ( 3 * i ) + 1 ] = color.g;
 			colors[ index + ( 3 * i ) + 2 ] = color.b;
-			displacement[ index + ( 3 * i ) ] = d;
-			displacement[ index + ( 3 * i ) + 1 ] = d;
+			displacement[ index + ( 3 * i ) ] = 0;
+			displacement[ index + ( 3 * i ) + 1 ] = 0;
 			displacement[ index + ( 3 * i ) + 2 ] = d;
 		}
 	}
@@ -68,6 +68,7 @@ function createText (text, textMaterial, fontScale = 0.1) {
 
     mestText = new THREE.Mesh( textGeo, textMaterial );
     mestText.scale.set(fontScale, fontScale, fontScale);
+    mestText.layers.enable(1);
     return mestText;
 }
 
