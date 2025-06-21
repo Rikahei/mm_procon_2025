@@ -8,13 +8,13 @@ skySystem.position.set( 0, -65, 0 );
 skyObjects.push( skySystem );
 
 // Moon
-const moonGeo = new THREE.IcosahedronGeometry(4, 1);
+const moonGeo = new THREE.IcosahedronGeometry(4, 2);
 const moonMaterial = new THREE.MeshPhongMaterial({color: 0xfffcb3});
 const moon = new THREE.Mesh( moonGeo, moonMaterial );
 moon.layers.enable( 1 );
 moon.position.x = 0;
 moon.position.y = -85;
-moon.position.z = -20;
+moon.position.z = -40;
 moon.scale.set(0.8, 0.8, 0.8);
 skySystem.add( moon );
 skyObjects.push( moon );

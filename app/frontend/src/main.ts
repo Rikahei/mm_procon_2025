@@ -10,8 +10,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import {THREE_GetGifTexture} from "threejs-gif-texture";
 import { skyObjects, skySystem } from "./skySystem";
 import { acceSystem } from './acceSystem';
-import { textGroup, textSystem, loadFont, createText, textPositionHelper, refreshText } from "./textSystem";
-
+import { textGroup, textSystem, loadFont, createText, 
+	textPositionHelper, charLengthHelper, refreshText } from "./textSystem";
 import EarthModel from '../public/models/earth_sphere.glb';
 import MikuM11 from "../public/images/M11.gif";
 import MikuM3 from "../public/images/M3.gif";
@@ -205,19 +205,19 @@ async function main (){
 				// Replace char with no animation
 				if(charTemp || !lastCharStartTime){
 					textGroup.remove(charTemp);
-					charFix = createText(char.text, shaderMaterial, ( screenRatio / textScaleIndex ), 1 );
+					charFix = createText(char.text, shaderMaterial, ( screenRatio / textScaleIndex ) * charLengthHelper(phrase.charCount), 1 );
 					textPositionHelper(charFix, charIndex, phrase.charCount, (  
-						screenRatio * textScaleIndex - 0.8 ) 
+						screenRatio * textScaleIndex * charLengthHelper(phrase.charCount) - 0.8 ) 
 					);
 					textGroup.add(charFix);
 				}
 				// Update lastChar
 				lastCharStartTime = char.startTime;
 				// Add char with animation
-				charTemp = createText(char.text, movingMaterial, ( screenRatio / textScaleIndex ), 0 );
+				charTemp = createText(char.text, movingMaterial, ( screenRatio / textScaleIndex ) * charLengthHelper(phrase.charCount), 0 );
 				textGroup.add(charTemp);
 				textPositionHelper(charTemp, charIndex, phrase.charCount, ( 
-					screenRatio * textScaleIndex - 0.8 ) 
+					screenRatio * textScaleIndex * charLengthHelper(phrase.charCount) - 0.8 ) 
 				);
 				meshControl = 100;
 				// disable layer for last Char in textgroup

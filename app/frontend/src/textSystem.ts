@@ -4,7 +4,7 @@ import DotGothic16 from '../public/fonts/DotGothic16-Regular.typeface.json?url';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js';
 
-export { textSystem, textGroup, loadFont, createText, textPositionHelper, refreshText};
+export { textSystem, textGroup, loadFont, createText, textPositionHelper, charLengthHelper, refreshText};
 
 const zodiacObjects = [];
 let font, mestText;
@@ -80,6 +80,21 @@ function textPositionHelper (char, charIndex, charCount, deg = 8) {
     char.position.x = x;
     char.position.y = y - 25;
     char.rotation.z = -degreesToRads;
+}
+
+function charLengthHelper (charCount) {
+    switch (charCount != undefined && charCount > 0) {
+        case (charCount > 23):
+            return 0.65;
+        case (charCount > 15):
+            return 0.8;
+        case (charCount < 7):
+            return 1.3;
+        case (charCount < 10):
+            return 1.2;
+        default:
+            return 1;
+    }
 }
 
 function refreshText() {
