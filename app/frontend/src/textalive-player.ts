@@ -4,6 +4,7 @@ import { Player } from "textalive-app-api";
 export const player = new Player({
   // トークンは https://developer.textalive.jp/profile で取得したものを使う
   app: {
+    // TODO: replace this token
     token: "test",
     parameters: [
       {
@@ -40,13 +41,19 @@ const seekbar = document.querySelector("#seekbar");
 const paintedSeekbar = seekbar.querySelector("div");
 let lastTime = -1;
 
+const getUrlParams = new URLSearchParams(document.location.search);
+let songUrl = getUrlParams.get("song_url");
+
 player.addListener({
   /* APIの準備ができたら呼ばれる */
   onAppReady(app) {
     if (app.managed) {
       document.querySelector("#control").className = "disabled";
     }
-    if (!app.songUrl) {
+    if (songUrl) {
+      document.querySelector("#media").className = "disabled";
+      player.createFromSongUrl(songUrl);
+    } else {
       document.querySelector("#media").className = "disabled";
 
       // ストリートライト / 加賀(ネギシャワーP)

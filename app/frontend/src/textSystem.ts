@@ -79,6 +79,7 @@ function textPositionHelper (char, charIndex, charCount, deg = 8) {
     let y = radius * Math.cos(degreesToRads);
     char.position.x = x;
     char.position.y = y - 25;
+    char.rotation.z = -degreesToRads;
 }
 
 function refreshText() {

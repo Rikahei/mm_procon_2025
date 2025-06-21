@@ -8,7 +8,7 @@ skySystem.position.set( 0, -65, 0 );
 skyObjects.push( skySystem );
 
 // Moon
-const moonGeo = new THREE.DodecahedronGeometry(3, 3);
+const moonGeo = new THREE.IcosahedronGeometry(4, 1);
 const moonMaterial = new THREE.MeshPhongMaterial({color: 0xfffcb3});
 const moon = new THREE.Mesh( moonGeo, moonMaterial );
 moon.layers.enable( 1 );
@@ -33,9 +33,9 @@ for (let i = 0; i < 100; i++) {
 
     star.rotation.x = Math.random() * 2 * Math.PI;
     star.rotation.y = Math.random() * 2 * Math.PI;
-    star.rotation.z = Math.random() * 2 * Math.PI - 10;
+    star.rotation.z = Math.random() * 2 * Math.PI - 20;
 
-    let randomScale = Math.random() * 1;
+    let randomScale = Math.random() * 0.8;
     star.scale.set(randomScale, randomScale, randomScale);
     
     skySystem.add(star);

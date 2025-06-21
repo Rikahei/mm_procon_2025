@@ -13,19 +13,19 @@ const acceObjects = [];
 const StarModels = [Star4, StarK, StarL, StarM, StarR, StarRK];
 
 const acceSystem = new THREE.Object3D();
-acceSystem.position.set( 0, -65, -10 );
+acceSystem.position.set( 0, -65, -20 );
 acceObjects.push( acceSystem );
 
 // load models
 const loader = new GLTFLoader();
 function loadStarModels(file) {
     loader.load( file, function ( gltf ) {
-        const desiredScale = 1.2;
-        for (let i = 0; i < 10; i++) {
+        const desiredScale = 0.8 + Math.random() * 1.5;
+        for (let i = 0; i < 8; i++) {
             const starClone = gltf.scene.clone();
             starClone.scale.set(desiredScale, desiredScale, desiredScale);
             starClone.position.set(Math.random() * 220 - 110, 
-                Math.random() * 220 - 100, Math.random() * 160 - 100);
+                Math.random() * 220 - 100, Math.random() * 120 - 100);
             starClone.rotation.x = -Math.PI * 1.5;
             starClone.rotation.y = Math.PI * 3 * Math.random();
             acceSystem.add( starClone );

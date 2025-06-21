@@ -69,7 +69,7 @@ async function main (){
 		transparent: true,
 		opacity: 1,
 	});
-	theMiku = new THREE.Mesh(new THREE.CircleGeometry(10, 20), mikuMaterial);
+	theMiku = new THREE.Mesh(new THREE.PlaneGeometry(15, 15), mikuMaterial);
 	theMiku.position.z = 20;
 	theMiku.scale.set(0.6, 0.6, 0.6);
 	scene.add(theMiku)
@@ -189,7 +189,7 @@ async function main (){
 
 		if(theMiku) {
 			theMiku.position.x = Math.sin( time * 0.2 ) * 8;
-			theMiku.position.y = -1 + ( Math.sin( time * 0.5 ) * 2);
+			theMiku.position.y = -1.25 + ( Math.sin( time * 0.5 ) * 2);
 			theMiku.rotation.y = Math.sin( time * 0.5 ) / 6;
 		}
 		// Set player video
@@ -227,11 +227,14 @@ async function main (){
 				charIndex = charIndex + 1;
 			}
 			// text animation control
-			if(meshControl >= 0.1 && phrase ){
+			if(meshControl >= 0.5 && phrase ){
 				meshControl -= 0.1;
 				movingMaterial.uniforms.amplitude.value = meshControl;
 			}else{
 				movingMaterial.uniforms.amplitude.value = 0;
+				if(textGroup.children[charIndex - 1]) {
+					textGroup.children[charIndex - 1].layers.disable(1);
+				}
 			}
 			// clear text when phrase ended
 			if( phrase != null &&
