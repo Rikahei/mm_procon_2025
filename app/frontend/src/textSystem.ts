@@ -48,9 +48,9 @@ function createText (text, textMaterial, fontScale = 0.1, isFix = 1, speech = nu
 	const color = new THREE.Color();
 	for ( let f = 0; f < numFaces; f ++ ) {
 		const index = 9 * f;
-		const h = speechColorHelper(speech).h;
-		const s = speechColorHelper(speech).s;
-		const l = speechColorHelper(speech).l;
+		const h = speechColorHelper(speech, isFix).h;
+		const s = speechColorHelper(speech, isFix).s;
+		const l = speechColorHelper(speech, isFix).l;
 		color.setHSL( h, s, l );
 		const d = 10 * ( 0.5 - Math.random() );
 		for ( let i = 0; i < 3; i ++ ) {
@@ -97,10 +97,23 @@ function charLengthHelper (charCount) {
     }
 }
 
-function speechColorHelper (speech) {
-    switch (speech) {
-        case 'N':
-            return { h: 0.85 + Math.random() * 0.3, s: 0.35 + Math.random(), l: 0.6 + Math.random() * 0.2};
+function speechColorHelper (speech, isFix = 1) {
+    const mikuColor = [0.8, 0.48];
+    const rinLenColor = [0.05, 0.18];
+    const mikoKaitoColor = [0.9, 0.65];
+    switch (true) {
+        case speech == 'N' && isFix == 1:
+            return { h: mikuColor[1], s: 0.35 + Math.random(), l: 0.4 + Math.random() * 0.25};
+        case speech == 'N' && isFix == 0:
+            return { h: mikuColor[Math.floor(Math.random() * 2)], s: 0.35 + Math.random(), l: 0.35 + Math.random() * 0.1};
+        case (speech == 'J' || speech == 'M') && isFix == 1:
+            return { h: rinLenColor[1], s: 0.35 + Math.random(), l: 0.5 + Math.random() * 0.2};
+        case (speech == 'J' || speech == 'M') && isFix == 0:
+            return { h: rinLenColor[Math.floor(Math.random() * 2)], s: 0.35 + Math.random(), l: 0.35 + Math.random() * 0.1};
+        case speech == 'V' && isFix == 1:
+            return { h: mikoKaitoColor[0], s: 0.35 + Math.random(), l: 0.5 + Math.random() * 0.2};
+        case speech == 'V' && isFix == 0:
+            return { h: mikoKaitoColor[Math.floor(Math.random() * 2)], s: 0.35 + Math.random(), l: 0.35 + Math.random() * 0.1};
         default:
             return { h: Math.random(), s: 0.35 + Math.random(), l: 0.5 + Math.random()};
     }
