@@ -23,7 +23,7 @@ function loadFont() {
     } );
 }
 
-function createText (text, textMaterial, fontScale = 0.1, isFix = 1) {
+function createText (text, textMaterial, fontScale = 0.1, isFix = 1, speech = null) {
     const props = {
       font,
       size: 10,
@@ -48,9 +48,9 @@ function createText (text, textMaterial, fontScale = 0.1, isFix = 1) {
 	const color = new THREE.Color();
 	for ( let f = 0; f < numFaces; f ++ ) {
 		const index = 9 * f;
-		const h = 2 * Math.random();
-		const s = 0.35 + Math.random();
-		const l = 0.5 + Math.random();
+		const h = speechColorHelper(speech).h;
+		const s = speechColorHelper(speech).s;
+		const l = speechColorHelper(speech).l;
 		color.setHSL( h, s, l );
 		const d = 10 * ( 0.5 - Math.random() );
 		for ( let i = 0; i < 3; i ++ ) {
@@ -94,6 +94,15 @@ function charLengthHelper (charCount) {
             return 1.2;
         default:
             return 1;
+    }
+}
+
+function speechColorHelper (speech) {
+    switch (speech) {
+        case 'N':
+            return { h: 0.85 + Math.random() * 0.3, s: 0.35 + Math.random(), l: 0.6 + Math.random() * 0.2};
+        default:
+            return { h: Math.random(), s: 0.35 + Math.random(), l: 0.5 + Math.random()};
     }
 }
 
