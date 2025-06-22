@@ -69,7 +69,7 @@ async function main (){
 		transparent: true,
 		opacity: 1,
 	});
-	theMiku = new THREE.Mesh(new THREE.PlaneGeometry(15, 15), mikuMaterial);
+	theMiku = new THREE.Mesh(new THREE.PlaneGeometry(18, 18), mikuMaterial);
 	theMiku.position.z = 20;
 	theMiku.scale.set(0.6, 0.6, 0.6);
 	scene.add(theMiku)
@@ -205,7 +205,8 @@ async function main (){
 				// Replace char with no animation
 				if(charTemp || !lastCharStartTime){
 					textGroup.remove(charTemp);
-					charFix = createText(char.text, shaderMaterial, ( screenRatio / textScaleIndex ) * charLengthHelper(phrase.charCount), 1 );
+					charFix = createText(char.text, shaderMaterial, 
+						( screenRatio / textScaleIndex ) * charLengthHelper(phrase.charCount), 1, char.parent.pos );
 					textPositionHelper(charFix, charIndex, phrase.charCount, (  
 						screenRatio * textScaleIndex * charLengthHelper(phrase.charCount) - 0.8 ) 
 					);
@@ -214,7 +215,8 @@ async function main (){
 				// Update lastChar
 				lastCharStartTime = char.startTime;
 				// Add char with animation
-				charTemp = createText(char.text, movingMaterial, ( screenRatio / textScaleIndex ) * charLengthHelper(phrase.charCount), 0 );
+				charTemp = createText(char.text, movingMaterial, 
+					( screenRatio / textScaleIndex ) * charLengthHelper(phrase.charCount), 0, char.parent.pos );
 				textGroup.add(charTemp);
 				textPositionHelper(charTemp, charIndex, phrase.charCount, ( 
 					screenRatio * textScaleIndex * charLengthHelper(phrase.charCount) - 0.8 ) 
