@@ -111,7 +111,7 @@ function speechColorHelper (speech, isFix = 1) {
         case (speech == 'J' || speech == 'M') && isFix == 0:
             return { h: rinLenColor[Math.floor(Math.random() * 2)], s: 0.35 + Math.random(), l: 0.35 + Math.random() * 0.1};
         case speech == 'V' && isFix == 1:
-            return { h: mikoKaitoColor[0], s: 0.35 + Math.random(), l: 0.5 + Math.random() * 0.2};
+            return { h: mikoKaitoColor[0], s: 0.5 + Math.random(), l: 0.58 + Math.random() * 0.1};
         case speech == 'V' && isFix == 0:
             return { h: mikoKaitoColor[Math.floor(Math.random() * 2)], s: 0.35 + Math.random(), l: 0.35 + Math.random() * 0.1};
         default:
