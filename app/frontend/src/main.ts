@@ -47,7 +47,7 @@ async function main (){
 	scene.add( acceSystem );
 	scene.add( textSystem );
 
-	let earth, theMiku, char, phrase, lastPhrase, charTemp, charFix = undefined;
+	let earth, theMiku, songName, artistName, char, phrase, lastPhrase, charTemp, charFix = undefined;
 	let lastCharStartTime, playerPosition, meshControl, charIndex, mikuSinging, screenRatio = 0;
 
 	// Load earth
@@ -258,10 +258,25 @@ async function main (){
 				refreshText();
 				charIndex = 0;
 			}
+			if (player.isPlaying == true && !phrase && 
+					lastCharStartTime && player.data.song.length * 1000 - 8000 < playerPosition) {
+				lastCharStartTime = undefined;
+				refreshText();
+				songName = createText(player.data.song.name, shaderMaterial, 
+					( screenRatio / textScaleIndex ) * 1, 1, 'songName' );
+				artistName = createText(player.data.song.artist.name, shaderMaterial, 
+					( screenRatio / textScaleIndex ) * 0.6, 1, 'artistName' );
+				songName.position.y = 20;
+				artistName.position.y = 14;
+				textGroup.add(songName, artistName);
+			}
 			// Miku changes
 			if( player.isPlaying == false && playerPosition < 1){
 				if(mikuSinging) loadMiku(2);
-				refreshText();
+				if(songName && artistName) {
+					songName.layers.disable(1);
+					artistName.layers.disable(1);
+				}
 			} else {
 				if(!mikuSinging) loadMiku(1);
 			}

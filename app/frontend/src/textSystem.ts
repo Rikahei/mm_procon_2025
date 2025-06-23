@@ -100,7 +100,7 @@ function charLengthHelper (charCount) {
 function speechColorHelper (speech, isFix = 1) {
     const mikuColor = [0.8, 0.48];
     const rinLenColor = [0.05, 0.18];
-    const mikoKaitoColor = [0.9, 0.65];
+    const mikoKaitoColor = [0, 0.65];
     switch (true) {
         case speech == 'N' && isFix == 1:
             return { h: mikuColor[1], s: 0.35 + Math.random(), l: 0.4 + Math.random() * 0.25};
@@ -111,7 +111,7 @@ function speechColorHelper (speech, isFix = 1) {
         case (speech == 'J' || speech == 'M') && isFix == 0:
             return { h: rinLenColor[Math.floor(Math.random() * 2)], s: 0.35 + Math.random(), l: 0.35 + Math.random() * 0.1};
         case speech == 'V' && isFix == 1:
-            return { h: mikoKaitoColor[0], s: 0.5 + Math.random(), l: 0.58 + Math.random() * 0.1};
+            return { h: 0.9, s: 0.5 + Math.random(), l: 0.58 + Math.random() * 0.1};
         case speech == 'V' && isFix == 0:
             return { h: mikoKaitoColor[Math.floor(Math.random() * 2)], s: 0.35 + Math.random(), l: 0.35 + Math.random() * 0.1};
         default:
