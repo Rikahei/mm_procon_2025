@@ -192,16 +192,16 @@ async function main (){
 			theMiku.position.y = -1.25 + ( Math.sin( time * 0.5 ) * 2);
 			theMiku.rotation.y = Math.sin( time * 0.5 ) / 6;
 		}
-		if(textGroup.children) {
+		if(textGroup.children && player.isPlaying == true) {
 			textGroup.children.forEach( (font, index) => {
 				const fontZ = font.position.z;
 				// Set animation after the bloom effect of temp & fix chars
-				if ( index % 2 == 0 && index < textGroup.children.length - 2 ) {
+				if ( index % 2 == 0 && ( index < textGroup.children.length - 2 || !phrase ) ) {
 					font.position.z = fontZ + (Math.sin( time * 0.7 ) / 120 );
-				} else if ( index < textGroup.children.length - 2 ) {
+				} else if ( index < textGroup.children.length - 2 || !phrase ) {
 					font.position.z = fontZ + (Math.cos( time * 0.7 ) / 120 );
 				}
-			})
+			});
 		}
 		// Set player video
 		if(player.video) {
@@ -246,6 +246,7 @@ async function main (){
 			}else{
 				movingMaterial.uniforms.amplitude.value = 0;
 				if(textGroup.children[charIndex - 1]) {
+					textGroup.remove(charTemp);
 					textGroup.children[charIndex - 1].layers.disable(1);
 				}
 			}
