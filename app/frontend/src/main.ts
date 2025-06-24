@@ -32,6 +32,14 @@ async function main (){
 	camera.position.set( 0, 0, 50 ); // default z = 50
 	camera.lookAt( 0, 0, 0 );
 
+	// Mouse pointer raycaster
+	const raycaster = new THREE.Raycaster();
+	const pointer = new THREE.Vector2();
+	function onPointerMove( event ) {
+		pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	}
+
 	let frontLightY = -10;
 	const scene = new THREE.Scene();
 	const color = 0xFFFFFF;
@@ -60,6 +68,18 @@ async function main (){
 	}, undefined, function ( error ) {
 		console.error( error );
 	});
+
+	const playBtnGeo = new THREE.TetrahedronGeometry(2, 0);
+	const playBtn = new THREE.Mesh(playBtnGeo, new THREE.MeshBasicMaterial({
+		color: 'white',
+	}));
+	playBtn.position.y = -8;
+	playBtn.position.z = 30;
+	playBtn.rotation.y = Math.PI / 1.35;
+	playBtn.rotation.z = Math.PI / 1.33;
+	playBtn.scale.set(0.8, 0.8, 0.8);
+	playBtn.layers.enable(1);
+	scene.add(playBtn);
 
 	// Load Miku
 	let mikuMaterial = new THREE.MeshBasicMaterial({
@@ -173,6 +193,16 @@ async function main (){
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			camera.updateProjectionMatrix();
 		}
+		raycaster.setFromCamera( pointer, camera );
+		const intersects = raycaster.intersectObjects( scene.children, true );
+		for ( let i = 0; i < intersects.length; i ++ ) {
+			if (intersects[ i ].object.parent.name == 'Earth') {
+				window.addEventListener('click', () => {
+					playBtn.visible = false;
+					player.requestPlay();
+				});
+			}
+		}
 		// earth rotations
 		if(earth){
 			earth.rotation.x = time * 0.01;
@@ -185,6 +215,7 @@ async function main (){
 		acceSystem.rotation.z = time * -0.05;
 
 		if(theMiku && mikuMaterial.map) {
+			playBtn.position.z = 30 + Math.sin(time * 0.2);
 			theMiku.position.y = -1.25 + ( Math.sin( time * 0.5 ) * 1.5);
 			theMiku.rotation.y = Math.sin( time * 0.5 ) / 6;
 			// Flip miku image when arrived position
@@ -280,6 +311,9 @@ async function main (){
 			// Play animation
 			if(player.isPlaying == true) {
 				mikuTimer.update();
+				if(playBtn.visible){
+					playBtn.visible = false;
+				}
 				if(theMiku && mikuMaterial.map) {
 					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * 10;
 				}
@@ -296,7 +330,7 @@ async function main (){
 			if(player.isPlaying == true && 
 				player.data.song.length * 1000 - 8000 < playerPosition) {
 					if(frontLight.intensity > 0.1 && frontLight.intensity < 2) {
-						frontLight.intensity -= 0.02;
+						frontLight.intensity -= 0.01;
 					}
 					if(frontLightY > -10 && frontLightY < 21) {
 						frontLightY -= 0.2;
@@ -309,6 +343,11 @@ async function main (){
 				if(songName && artistName) {
 					songName.layers.disable(1);
 					artistName.layers.disable(1);
+					playBtn.visible = true;
+				}
+				if(theMiku.position.x > 0.05 || theMiku.position.x < -0.05) {
+					mikuTimer.update();
+					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * 10;
 				}
 			} else {
 				if(!mikuSinging) loadMiku(1);
@@ -328,6 +367,7 @@ async function main (){
 	// load the font
 	loadFont();
 	loadMiku();
+	window.addEventListener( 'pointermove', onPointerMove );
 	requestAnimationFrame( render );
 }
 main();
