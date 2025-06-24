@@ -187,10 +187,19 @@ async function main (){
 		} );
 		acceSystem.rotation.z = time * -0.05;
 
-		if(theMiku) {
-			theMiku.position.x = Math.sin( time * 0.2 ) * 8;
-			theMiku.position.y = -1.25 + ( Math.sin( time * 0.5 ) * 2);
+		if(theMiku && mikuMaterial.map) {
+			theMiku.position.x = Math.sin( time * 0.2 ) * 10;
+			theMiku.position.y = -1.25 + ( Math.sin( time * 0.5 ) * 1.5);
 			theMiku.rotation.y = Math.sin( time * 0.5 ) / 6;
+			// Flip miku image when arrived position
+			// Don't know why set map center in render get more smooth gif action.
+			if (theMiku.position.x > 9.9) {
+				mikuMaterial.map.center.set( 0.5, 0.5 );
+    			mikuMaterial.map.repeat.set( 1, 1 );
+			} else if (theMiku.position.x < -9.9) {
+				mikuMaterial.map.center.set( 0.5, 0.5 );
+				mikuMaterial.map.repeat.set( -1, 1 );
+			}
 		}
 		if(textGroup.children && player.isPlaying == true) {
 			textGroup.children.forEach( (font, index) => {

@@ -25,7 +25,7 @@ function loadStarModels(file) {
             const starClone = gltf.scene.clone();
             starClone.scale.set(desiredScale, desiredScale, desiredScale);
             starClone.position.set(Math.random() * 220 - 110, 
-                Math.random() * 220 - 100, Math.random() * 120 - 100);
+                Math.random() * 220 - 100, Math.random() * 120 - 150);
             starClone.rotation.x = -Math.PI * 1.5;
             starClone.rotation.y = Math.PI * 3 * Math.random();
             acceSystem.add( starClone );

@@ -17,7 +17,7 @@ for (let i = 0; i < 100; i++) {
     star.layers.enable( 1 );
     star.position.x = Math.random() * starsSpace - spaceFix;
     star.position.y = Math.random() * starsSpace - spaceFix;
-    star.position.z = Math.random() * starsSpace - spaceFix - 120;
+    star.position.z = Math.random() * starsSpace - spaceFix - 150;
 
     star.rotation.x = Math.random() * 2 * Math.PI;
     star.rotation.y = Math.random() * 2 * Math.PI;
