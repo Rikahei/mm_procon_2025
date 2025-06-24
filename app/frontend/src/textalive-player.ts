@@ -1,7 +1,12 @@
 import { Player } from "textalive-app-api";
+import * as THREE from 'three';
+import { Timer } from 'three/addons/misc/Timer.js';
 
 // TextAlive Player を初期化
-export const player = new Player({
+export {player, mikuTimer};
+
+const mikuTimer = new Timer();
+const player = new Player({
   // トークンは https://developer.textalive.jp/profile で取得したものを使う
   app: {
     // TODO: replace this token
@@ -146,6 +151,8 @@ player.addListener({
     const a = document.querySelector("#control > a#play");
     while (a.firstChild) a.removeChild(a.firstChild);
     a.appendChild(document.createTextNode("\uf28b"));
+    mikuTimer.connect( document );
+    mikuTimer.reset()
   },
 
   /* 楽曲の再生が止まったら呼ばれる */
@@ -174,10 +181,7 @@ document.querySelector("#control > a#stop").addEventListener("click", (e) => {
   e.preventDefault();
   if (player) {
     player.requestStop();
-
-    // 再生を停止したら画面表示をリセットする
-    bar.className = "";
-    resetChars();
+    mikuTimer.disconnect()
   }
   return false;
 });

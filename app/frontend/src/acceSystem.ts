@@ -20,7 +20,7 @@ acceObjects.push( acceSystem );
 const loader = new GLTFLoader();
 function loadStarModels(file) {
     loader.load( file, function ( gltf ) {
-        const desiredScale = 0.8 + Math.random() * 1.5;
+        const desiredScale = 1 + Math.random() * 1.5;
         for (let i = 0; i < 8; i++) {
             const starClone = gltf.scene.clone();
             starClone.scale.set(desiredScale, desiredScale, desiredScale);

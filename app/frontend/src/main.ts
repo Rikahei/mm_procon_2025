@@ -1,4 +1,4 @@
-import { player, video } from "./textalive-player";
+import { player, mikuTimer } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -32,17 +32,15 @@ async function main (){
 	camera.position.set( 0, 0, 50 ); // default z = 50
 	camera.lookAt( 0, 0, 0 );
 
+	let frontLightY = -10;
 	const scene = new THREE.Scene();
-	{
-		const color = 0xFFFFFF;
-		const intensity = 2;
-		const frontLight = new THREE.DirectionalLight( color, intensity );
-		const backLight = new THREE.DirectionalLight( color, 0.5 );
-		frontLight.position.set( 0, 5, 20 );
-		backLight.position.set( 0, -50, -150 );
-		scene.add( frontLight, backLight );
-	}
-
+	const color = 0xFFFFFF;
+	const intensity = 0.2;
+	const frontLight = new THREE.DirectionalLight( color, intensity );
+	const ambientLight = new THREE.AmbientLight( color, 0.2 );
+	frontLight.position.set( 0, 0, 20 );
+	ambientLight.position.set( 0, -50, -50 );
+	scene.add( frontLight, ambientLight );
 	scene.add( skySystem );
 	scene.add( acceSystem );
 	scene.add( textSystem );
@@ -86,13 +84,13 @@ async function main (){
 
 	let textScaleIndex = 5;
 
-	// Set materials
+	// Set text materials
 	const shaderMaterial = new THREE.ShaderMaterial( {
 		uniforms: { amplitude: { value: 0.0 } },
 		vertexShader: document.getElementById( 'vertexText' ).textContent,
 		fragmentShader: document.getElementById( 'fragmentText' ).textContent
 	} );
-	// set moveing material
+	// Set text moveing material
 	let movingMaterial = shaderMaterial.clone();
 	movingMaterial.uniforms.amplitude.value = 1;
 
@@ -176,6 +174,21 @@ async function main (){
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			camera.updateProjectionMatrix();
 		}
+		if(player.isPlaying == true) {
+			mikuTimer.update();
+
+			if(theMiku && mikuMaterial.map) {
+				theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * 10;
+			}
+			// dim the light
+			if (frontLight.intensity < 1.8) {
+				frontLight.intensity = mikuTimer.getElapsed() * 0.2;
+			};
+			if (frontLightY < 15 ) {
+				frontLightY = mikuTimer.getElapsed() * 0.1;
+				frontLight.position.set( 0, frontLightY, 20 );
+			}
+		}
 		// earth rotations
 		if(earth){
 			earth.rotation.x = time * 0.01;
@@ -188,7 +201,6 @@ async function main (){
 		acceSystem.rotation.z = time * -0.05;
 
 		if(theMiku && mikuMaterial.map) {
-			theMiku.position.x = Math.sin( time * 0.2 ) * 10;
 			theMiku.position.y = -1.25 + ( Math.sin( time * 0.5 ) * 1.5);
 			theMiku.rotation.y = Math.sin( time * 0.5 ) / 6;
 			// Flip miku image when arrived position
