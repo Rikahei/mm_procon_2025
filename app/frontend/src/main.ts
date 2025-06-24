@@ -35,8 +35,7 @@ async function main (){
 	let frontLightY = -10;
 	const scene = new THREE.Scene();
 	const color = 0xFFFFFF;
-	const intensity = 0.2;
-	const frontLight = new THREE.DirectionalLight( color, intensity );
+	const frontLight = new THREE.DirectionalLight( color, 0 );
 	const ambientLight = new THREE.AmbientLight( color, 0.2 );
 	frontLight.position.set( 0, 0, 20 );
 	ambientLight.position.set( 0, -50, -50 );
@@ -174,21 +173,6 @@ async function main (){
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			camera.updateProjectionMatrix();
 		}
-		if(player.isPlaying == true) {
-			mikuTimer.update();
-
-			if(theMiku && mikuMaterial.map) {
-				theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * 10;
-			}
-			// dim the light
-			if (frontLight.intensity < 1.8) {
-				frontLight.intensity = mikuTimer.getElapsed() * 0.2;
-			};
-			if (frontLightY < 15 ) {
-				frontLightY = mikuTimer.getElapsed() * 0.1;
-				frontLight.position.set( 0, frontLightY, 20 );
-			}
-		}
 		// earth rotations
 		if(earth){
 			earth.rotation.x = time * 0.01;
@@ -280,6 +264,7 @@ async function main (){
 				refreshText();
 				charIndex = 0;
 			}
+			// Close title and artist name
 			if (player.isPlaying == true && !phrase && 
 					lastCharStartTime && player.data.song.length * 1000 - 8000 < playerPosition) {
 				lastCharStartTime = undefined;
@@ -291,6 +276,32 @@ async function main (){
 				songName.position.y = 20;
 				artistName.position.y = 14;
 				textGroup.add(songName, artistName);
+			}
+			// Play animation
+			if(player.isPlaying == true) {
+				mikuTimer.update();
+				if(theMiku && mikuMaterial.map) {
+					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * 10;
+				}
+				// dim the light
+				if (frontLight.intensity < 1.8) {
+					frontLight.intensity += 0.002;
+				};
+				if (frontLightY < 20 ) {
+					frontLightY += 0.02;
+					frontLight.position.set( 0, frontLightY, 20 );
+				}
+			}
+			// Dim light at ending
+			if(player.isPlaying == true && 
+				player.data.song.length * 1000 - 8000 < playerPosition) {
+					if(frontLight.intensity > 0.1 && frontLight.intensity < 2) {
+						frontLight.intensity -= 0.02;
+					}
+					if(frontLightY > -10 && frontLightY < 21) {
+						frontLightY -= 0.2;
+						frontLight.position.set(0, frontLightY, 20);
+					}
 			}
 			// Miku changes
 			if( player.isPlaying == false && playerPosition < 1){
