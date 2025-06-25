@@ -1,5 +1,4 @@
 import { Player } from "textalive-app-api";
-import * as THREE from 'three';
 import { Timer } from 'three/addons/misc/Timer.js';
 
 // TextAlive Player を初期化
@@ -46,8 +45,8 @@ const seekbar = document.querySelector("#seekbar");
 const paintedSeekbar = seekbar.querySelector("div");
 let lastTime = -1;
 
-const getUrlParams = new URLSearchParams(document.location.search);
-let songUrl = getUrlParams.get("song_url");
+// const getUrlParams = new URLSearchParams(document.location.search);
+// let songUrl = getUrlParams.get("song_url");
 
 player.addListener({
   /* APIの準備ができたら呼ばれる */
@@ -55,10 +54,7 @@ player.addListener({
     if (app.managed) {
       document.querySelector("#control").className = "disabled";
     }
-    if (songUrl) {
-      document.querySelector("#media").className = "disabled";
-      player.createFromSongUrl(songUrl);
-    } else {
+    if (!app.songUrl) {
       document.querySelector("#media").className = "disabled";
 
       // ストリートライト / 加賀(ネギシャワーP)
@@ -107,7 +103,6 @@ player.addListener({
 
     // 最後に取得した再生時刻の情報をリセット
     lastTime = -1;
-    player.volume = 20;
   },
 
   /* 再生コントロールができるようになったら呼ばれる */
