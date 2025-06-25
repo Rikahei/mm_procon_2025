@@ -175,3 +175,8 @@ html, body {
   height: 100%;
   background: rgba(255 255 255 / 80%);
 }
+
+.lil-gui { 
+  margin-top: 1em;
+	--width: 20em;
+}

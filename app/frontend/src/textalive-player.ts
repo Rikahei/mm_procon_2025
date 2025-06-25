@@ -1,5 +1,4 @@
 import { Player } from "textalive-app-api";
-import * as THREE from 'three';
 import { Timer } from 'three/addons/misc/Timer.js';
 
 // TextAlive Player を初期化
@@ -104,7 +103,6 @@ player.addListener({
 
     // 最後に取得した再生時刻の情報をリセット
     lastTime = -1;
-    player.volume = 20;
   },
 
   /* 再生コントロールができるようになったら呼ばれる */

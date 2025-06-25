@@ -1,7 +1,6 @@
 import { player, mikuTimer } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
-import GUI from 'lil-gui';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
@@ -9,6 +8,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import {THREE_GetGifTexture} from "threejs-gif-texture";
+import { gui } from "./lilGui";
 import { skyObjects, skySystem } from "./skySystem";
 import { acceSystem } from './acceSystem';
 import { textGroup, textSystem, loadFont, createText, 
@@ -21,31 +21,11 @@ import MikuW2 from "../public/images/W2.gif";
 async function main (){
   	// load text-alive player
   	await player;
+	await gui;
 
 	const canvas = document.querySelector( '#mainCanvas' );
 	document.querySelector("#media").className = "disabled";
 	const renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true, canvas } );
-	const gui = new GUI();
-	const folder = gui.addFolder( 'setList' );
-	const setList = {
-		ロンリーラン: () => changeMedia(''),
-		パレードレコード: () => changeMedia('https://piapro.jp/t/GCgy/20250202202635'),
-		インフォーマルダイブ: () => changeMedia('https://piapro.jp/t/Ppc9/20241224135843')
-	};
-	function changeMedia(url) {
-		let urlParams = new URLSearchParams(window.location.search);
-		urlParams.set('ta_song_url', url);
-		window.location.search = urlParams.toString();
-	}
-	let guiParams = { volume: 20 };
-
-	gui.add( guiParams, 'volume', 0, 100, 1 ).onChange( function ( value ) {
-		player.volume = value;
-	} );
-	folder.add(setList, 'ロンリーラン');
-	folder.add(setList, 'パレードレコード');
-	folder.add(setList, 'インフォーマルダイブ');
-	gui.close();
 
 	const fov = 60;
 	const aspect = 2; // the canvas default
@@ -54,14 +34,6 @@ async function main (){
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
 	camera.position.set( 0, 0, 50 ); // default z = 50
 	camera.lookAt( 0, 0, 0 );
-
-	// Mouse pointer raycaster
-	const raycaster = new THREE.Raycaster();
-	const pointer = new THREE.Vector2();
-	function onPointerMove( event ) {
-		pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-		pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-	}
 
 	let frontLightY = -10;
 	const scene = new THREE.Scene();
@@ -102,7 +74,24 @@ async function main (){
 	playBtn.rotation.z = Math.PI / 1.33;
 	playBtn.scale.set(0.8, 0.8, 0.8);
 	playBtn.layers.enable(1);
+	playBtn.name = 'playBtn';
 	scene.add(playBtn);
+
+	// Mouse pointer raycaster
+	const raycaster = new THREE.Raycaster();
+	const pointer = new THREE.Vector2();
+	function onPointerDown(event) {
+		pointer.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
+		raycaster.setFromCamera( pointer, camera );
+		const intersects = raycaster.intersectObjects( scene.children, true );
+		for ( let i = 0; i < intersects.length; i ++ ) {
+			if(intersects[i].object.name == 'playBtn' || intersects[i].object.parent.name == 'Earth') {
+				playBtn.visible = false;
+				player.requestPlay();
+			}
+		}
+	}
+	document.addEventListener( 'pointerdown', onPointerDown );
 
 	// Load Miku
 	let mikuMaterial = new THREE.MeshBasicMaterial({
@@ -216,16 +205,6 @@ async function main (){
 			camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			camera.updateProjectionMatrix();
 		}
-		raycaster.setFromCamera( pointer, camera );
-		const intersects = raycaster.intersectObjects( scene.children, true );
-		for ( let i = 0; i < intersects.length; i ++ ) {
-			if (intersects[ i ].object.parent.name == 'Earth') {
-				window.addEventListener('click', () => {
-					// playBtn.visible = false;
-					// player.requestPlay();
-				});
-			}
-		}
 		// earth rotations
 		if(earth){
 			earth.rotation.x = time * 0.01;
@@ -327,8 +306,8 @@ async function main (){
 					( screenRatio / textScaleIndex ) * 1, 1, 'songName' );
 				artistName = createText(player.data.song.artist.name, shaderMaterial, 
 					( screenRatio / textScaleIndex ) * 0.6, 1, 'artistName' );
-				songName.position.y = 18;
-				artistName.position.y = 12;
+				songName.position.y = 16;
+				artistName.position.y = 10;
 				textGroup.add(songName, artistName);
 			}
 			// Play animation
@@ -390,7 +369,6 @@ async function main (){
 	// load the font
 	loadFont();
 	loadMiku();
-	window.addEventListener( 'pointermove', onPointerMove );
 	requestAnimationFrame( render );
 }
 main();
