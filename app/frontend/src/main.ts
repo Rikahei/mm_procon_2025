@@ -1,6 +1,7 @@
 import { player, mikuTimer } from "./textalive-player";
 import "./style.css";
 import * as THREE from 'three';
+import GUI from 'lil-gui';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
@@ -22,7 +23,29 @@ async function main (){
   	await player;
 
 	const canvas = document.querySelector( '#mainCanvas' );
+	document.querySelector("#media").className = "disabled";
 	const renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true, canvas } );
+	const gui = new GUI();
+	const folder = gui.addFolder( 'setList' );
+	const setList = {
+		ロンリーラン: () => changeMedia(''),
+		パレードレコード: () => changeMedia('https://piapro.jp/t/GCgy/20250202202635'),
+		インフォーマルダイブ: () => changeMedia('https://piapro.jp/t/Ppc9/20241224135843')
+	};
+	function changeMedia(url) {
+		let urlParams = new URLSearchParams(window.location.search);
+		urlParams.set('ta_song_url', url);
+		window.location.search = urlParams.toString();
+	}
+	let guiParams = { volume: 20 };
+
+	gui.add( guiParams, 'volume', 0, 100, 1 ).onChange( function ( value ) {
+		player.volume = value;
+	} );
+	folder.add(setList, 'ロンリーラン');
+	folder.add(setList, 'パレードレコード');
+	folder.add(setList, 'インフォーマルダイブ');
+	gui.close();
 
 	const fov = 60;
 	const aspect = 2; // the canvas default
@@ -198,8 +221,8 @@ async function main (){
 		for ( let i = 0; i < intersects.length; i ++ ) {
 			if (intersects[ i ].object.parent.name == 'Earth') {
 				window.addEventListener('click', () => {
-					playBtn.visible = false;
-					player.requestPlay();
+					// playBtn.visible = false;
+					// player.requestPlay();
 				});
 			}
 		}
@@ -304,8 +327,8 @@ async function main (){
 					( screenRatio / textScaleIndex ) * 1, 1, 'songName' );
 				artistName = createText(player.data.song.artist.name, shaderMaterial, 
 					( screenRatio / textScaleIndex ) * 0.6, 1, 'artistName' );
-				songName.position.y = 20;
-				artistName.position.y = 14;
+				songName.position.y = 18;
+				artistName.position.y = 12;
 				textGroup.add(songName, artistName);
 			}
 			// Play animation
