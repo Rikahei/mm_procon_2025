@@ -41,8 +41,7 @@ html, body {
   border-right: 1px solid #fff6;
 }
 
-#header,
-#media {
+#header {
   position: fixed;
   left: 0;
   background: #000c;
@@ -91,7 +90,11 @@ html, body {
 /* Audio source */
 #media {
   /* Bottom-aligned */
-  bottom: 10px;
+  bottom: 2em;
+  position: fixed;
+  background: #000c;
+  right: 0;
+  z-index: 1;
 }
 #media.disabled > .textalive-media-wrapper {
   width: 0;
