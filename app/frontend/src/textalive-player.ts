@@ -1,5 +1,6 @@
 import { Player } from "textalive-app-api";
 import { Timer } from 'three/addons/misc/Timer.js';
+import { textGroup, refreshText } from "./textSystem";
 
 // TextAlive Player を初期化
 export {player, mikuTimer};
@@ -56,6 +57,9 @@ player.addListener({
 
     // reset last time
     lastTime = -1;
+
+    // Reset text
+    refreshText()
   },
 
   onTimerReady() {

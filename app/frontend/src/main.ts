@@ -86,6 +86,7 @@ async function main (){
 		const intersects = raycaster.intersectObjects( scene.children, true );
 		for ( let i = 0; i < intersects.length; i ++ ) {
 			if(intersects[i].object.name == 'playBtn' || intersects[i].object.parent.name == 'Earth') {
+				if( player.isLoading ) return;
 				playBtn.visible = false;
 				player.requestPlay();
 			}
@@ -291,9 +292,9 @@ async function main (){
 			// clear text when phrase ended
 			if( phrase != null &&
 				phrase.startTime - 100 < playerPosition && playerPosition < phrase.endTime 
-				&& lastPhrase != phrase.text	
+				&& lastPhrase != phrase.startTime	
 			){
-				lastPhrase = phrase.text;
+				lastPhrase = phrase.startTime;
 				refreshText();
 				charIndex = 0;
 			}
