@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - threejs
 
 jobs:
   build:
@@ -26,6 +26,8 @@ jobs:
         run: |
           cd app/frontend
           npm run build
+        env: 
+          VITE_TEXTALIVE_TOKEN=${{ secrets.VITE_TEXTALIVE_TOKEN }}
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4

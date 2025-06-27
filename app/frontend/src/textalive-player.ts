@@ -8,7 +8,7 @@ const mikuTimer = new Timer();
 const player = new Player({
   // トークンは https://developer.textalive.jp/profile で取得したものを使う
   app: {
-    token: "SCH3IxbgAz27QkgC",
+    token: import.meta.env.VITE_TEXTALIVE_TOKEN ?? "test",
   },
 
   mediaElement: document.querySelector("#media"),
