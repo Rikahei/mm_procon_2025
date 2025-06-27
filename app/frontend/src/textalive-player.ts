@@ -8,35 +8,11 @@ const mikuTimer = new Timer();
 const player = new Player({
   // トークンは https://developer.textalive.jp/profile で取得したものを使う
   app: {
-    // TODO: replace this token
-    token: "test",
-    parameters: [
-      {
-        title: "Gradation start color",
-        name: "gradationStartColor",
-        className: "Color",
-        initialValue: "#bfaefc",
-      },
-      {
-        title: "Gradation middle color",
-        name: "gradationMiddleColor",
-        className: "Color",
-        initialValue: "#fea3db"
-      },
-      {
-        title: "Gradation end color",
-        name: "gradationEndColor",
-        className: "Color",
-        initialValue: "#9ae1dd",
-      },
-    ],
+    token: "SCH3IxbgAz27QkgC",
   },
 
   mediaElement: document.querySelector("#media"),
   mediaBannerPosition: "bottom right",
-
-  // オプション一覧
-  // https://developer.textalive.jp/packages/textalive-app-api/interfaces/playeroptions.html
 });
 
 const overlay = document.querySelector("#overlay");
@@ -45,103 +21,62 @@ const seekbar = document.querySelector("#seekbar");
 const paintedSeekbar = seekbar.querySelector("div");
 let lastTime = -1;
 
-// const getUrlParams = new URLSearchParams(document.location.search);
-// let songUrl = getUrlParams.get("song_url");
-
 player.addListener({
-  /* APIの準備ができたら呼ばれる */
   onAppReady(app) {
     if (app.managed) {
       document.querySelector("#control").className = "disabled";
     }
     if (!app.songUrl) {
       document.querySelector("#media").className = "disabled";
-
-      // ストリートライト / 加賀(ネギシャワーP)
+      // ロンリーラン
       player.createFromSongUrl("https://piapro.jp/t/CyPO/20250128183915", {
         video: {
-          // // 音楽地図訂正履歴
-          // beatId: 4694275,
-          // chordId: 2830730,
-          // repetitiveSegmentId: 2946478,
-      
-          // // 歌詞URL: https://piapro.jp/t/DPXV
-          // // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FULcJ%2F20250205120202
-          // lyricId: 67810,
-          // lyricDiffId: 20654
+          // 音楽地図訂正履歴
+          beatId: 4694280,
+          chordId: 2830735,
+          repetitiveSegmentId: 2946483,
+
+          // 歌詞URL: https://piapro.jp/t/DPXV
+          // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FULcJ%2F20250205120202
+          lyricId: 67815,
+          lyricDiffId: 20659
         },
       });
     }
   },
 
-  /* パラメタが更新されたら呼ばれる */
-  onAppParameterUpdate: () => {
-    const params = player.app.options.parameters;
-    const sc = player.app.parameters.gradationStartColor,
-      scString = sc ? `rgb(${sc.r}, ${sc.g}, ${sc.b})` : params[0].initialValue;
-    const mc = player.app.parameters.gradationMiddleColor,
-      mcString = mc ? `rgb(${mc.r}, ${mc.g}, ${mc.b})` : params[0].initialValue;
-    const ec = player.app.parameters.gradationEndColor,
-      ecString = ec ? `rgb(${ec.r}, ${ec.g}, ${ec.b})` : params[1].initialValue;
-    document.body.style.backgroundColor = ecString;
-    document.body.style.backgroundImage = `linear-gradient(0deg, ${ecString} 0%, ${mcString} 50%, ${scString} 100%)`;
-  },
+  onAppParameterUpdate: () => {},
 
-  /* 楽曲が変わったら呼ばれる */
-  onAppMediaChange() {
-    // 画面表示をリセット
-    overlay.className = "";
-    resetChars();
-  },
+  onAppMediaChange() {},
 
-  /* 楽曲情報が取れたら呼ばれる */
   onVideoReady(video) {
-    // 楽曲情報を表示
-    document.querySelector("#artist span").textContent =
-      player.data.song.artist.name;
+    // Show media info
+    document.querySelector("#artist span").textContent = player.data.song.artist.name;
     document.querySelector("#song span").textContent = player.data.song.name;
 
-    // 最後に取得した再生時刻の情報をリセット
+    // reset last time
     lastTime = -1;
   },
 
-  /* 再生コントロールができるようになったら呼ばれる */
   onTimerReady() {
     overlay.className = "disabled";
     document.querySelector("#control > a#play").className = "";
     document.querySelector("#control > a#stop").className = "";
   },
 
-  /* 再生位置の情報が更新されたら呼ばれる */
   onTimeUpdate(position) {
-    // シークバーの表示を更新
+    // update seekbar
     paintedSeekbar.style.width = `${
       parseInt((position * 1000) / player.video.duration) / 10
     }%`;
-
-    // 歌詞情報がなければこれで処理を終わる
+    // End when video has no firstChar
     if (!player.video.firstChar) {
       return;
     }
-
-    // 巻き戻っていたら歌詞表示をリセットする
-    if (lastTime > position + 1000) {
-      resetChars();
-    }
-
-    // 500ms先に発声される文字を検出
-    // 初回は開始時からの差分区間、それ以降は前回実行時からの差分区間を検出
-    const chars = player.video.findCharChange(lastTime < 0 ? lastTime : lastTime + 500, position + 500);
-    for (const c of chars.entered) {
-      // 新しい文字が発声されようとしている
-      newChar(c);
-    }
-
-    // 次回呼ばれるときのために再生時刻を保存しておく
+    // Save last time to position
     lastTime = position;
   },
 
-  /* 楽曲の再生が始まったら呼ばれる */
   onPlay() {
     const a = document.querySelector("#control > a#play");
     while (a.firstChild) a.removeChild(a.firstChild);
@@ -150,7 +85,6 @@ player.addListener({
     mikuTimer.reset()
   },
 
-  /* 楽曲の再生が止まったら呼ばれる */
   onPause() {
     const a = document.querySelector("#control > a#play");
     while (a.firstChild) a.removeChild(a.firstChild);
@@ -158,7 +92,7 @@ player.addListener({
   },
 });
 
-/* 再生・一時停止ボタン */
+// Play / Pause button
 document.querySelector("#control > a#play").addEventListener("click", (e) => {
   e.preventDefault();
   if (player) {
@@ -171,7 +105,7 @@ document.querySelector("#control > a#play").addEventListener("click", (e) => {
   return false;
 });
 
-/* 停止ボタン */
+// Stop button
 document.querySelector("#control > a#stop").addEventListener("click", (e) => {
   e.preventDefault();
   if (player) {

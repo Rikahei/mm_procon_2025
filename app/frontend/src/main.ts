@@ -218,7 +218,7 @@ async function main (){
 
 		if(theMiku && mikuMaterial.map) {
 			playBtn.position.z = 30 + Math.sin(time * 0.2);
-			theMiku.position.y = -1.25 + ( Math.sin( time * 0.5 ) * 1.5);
+			theMiku.position.y = -1.5 + ( Math.sin( time * 0.5 ) * 1.5);
 			theMiku.rotation.y = Math.sin( time * 0.5 ) / 6;
 			// Flip miku image when arrived position
 			// Don't know why set map center in render get more smooth gif action.
@@ -306,8 +306,8 @@ async function main (){
 					( screenRatio / textScaleIndex ) * 1, 1, 'songName' );
 				artistName = createText(player.data.song.artist.name, shaderMaterial, 
 					( screenRatio / textScaleIndex ) * 0.6, 1, 'artistName' );
-				songName.position.y = 16;
-				artistName.position.y = 10;
+				songName.position.y = 16.5;
+				artistName.position.y = 11;
 				textGroup.add(songName, artistName);
 			}
 			// Play animation
