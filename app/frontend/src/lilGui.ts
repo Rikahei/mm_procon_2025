@@ -4,21 +4,25 @@ import { player } from './textalive-player';
 export { gui };
 
 const gui = new GUI();
-const folder = gui.addFolder( 'SetList' );
-const playerVolume = localStorage.getItem("playerVolume") ?? 80;
+const playerVolume: number = parseInt(localStorage.getItem("playerVolume") ?? "80");
+const guiParams = { 
+    Volume: playerVolume,
+    FullScreen: () => { document.querySelector( '#mainCanvas' )?.requestFullscreen() }
+};
+gui.add( guiParams, 'FullScreen' );
 // Set default player volume
 player.volume = playerVolume;
-
-const guiParams = { Volume: parseInt(playerVolume) ?? 80 };
+gui.add( guiParams, 'Volume', 0, 100, 1 ).onChange( function ( value ) {
+    player.volume = value;
+    localStorage.setItem("playerVolume", value);
+} );
+// Add setlist
+const folder = gui.addFolder( 'SetList' );
 const setList = {
     ロンリーラン: () => changeMedia(''),
     パレードレコード: () => changeMedia('https://piapro.jp/t/GCgy/20250202202635'),
     インフォーマルダイブ: () => changeMedia('https://piapro.jp/t/Ppc9/20241224135843')
 };
-gui.add( guiParams, 'Volume', 0, 100, 1 ).onChange( function ( value ) {
-    player.volume = value;
-    localStorage.setItem("playerVolume", value);
-} );
 folder.add(setList, 'ロンリーラン');
 folder.add(setList, 'パレードレコード');
 folder.add(setList, 'インフォーマルダイブ');
