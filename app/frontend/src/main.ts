@@ -48,7 +48,7 @@ async function main (){
 	scene.add( textSystem );
 
 	let earth, theMiku, songName, artistName, char, phrase, lastPhrase, charTemp, charFix = undefined;
-	let lastCharStartTime, playerPosition, meshControl, charIndex, mikuSinging, screenRatio = 0;
+	let lastCharStartTime, playerPosition, jitterUnlock, meshControl, charIndex, mikuSinging, screenRatio = 0;
 
 	// Load earth
 	const modelLoader = new GLTFLoader();
@@ -247,10 +247,14 @@ async function main (){
 			playerPosition = player.timer.position;
 			phrase = player.video.findPhrase(playerPosition, { loose: true });
 			char = player.video.findChar(playerPosition, { loose: true });
+			// Textalive API has jittery start from piapro.jp
+			// Add char lock to prevent display char from random postions at starting
+			if(phrase && phrase.firstChar.startTime == char.startTime) jitterUnlock = 1;
+
 			// If position reach char time...
 			if( char != null &&
 				char.startTime < playerPosition && playerPosition < char.endTime 
-				&& lastCharStartTime != char.startTime
+				&& lastCharStartTime != char.startTime && jitterUnlock == 1
 			){
 				// Replace char with no animation
 				if(charTemp || !lastCharStartTime){
@@ -291,7 +295,7 @@ async function main (){
 			}
 			// clear text when phrase ended
 			if( phrase != null &&
-				phrase.startTime - 100 < playerPosition && playerPosition < phrase.endTime 
+				phrase.startTime - 50 < playerPosition && playerPosition < phrase.endTime 
 				&& lastPhrase != phrase.startTime	
 			){
 				lastPhrase = phrase.startTime;
@@ -342,11 +346,12 @@ async function main (){
 			}
 			// Miku changes
 			if( player.isPlaying == false && playerPosition < 1){
+				jitterUnlock = 0;
+				playBtn.visible = true;
 				if(mikuSinging) loadMiku(2);
 				if(songName && artistName) {
 					songName.layers.disable(1);
 					artistName.layers.disable(1);
-					playBtn.visible = true;
 				}
 				if(theMiku.position.x > 0.05 || theMiku.position.x < -0.05) {
 					mikuTimer.update();
