@@ -249,7 +249,9 @@ async function main (){
 			char = player.video.findChar(playerPosition, { loose: true });
 			// Textalive API has jittery start from piapro.jp
 			// Add char lock to prevent display char from random postions at starting
-			if(phrase && phrase.firstChar.startTime == char.startTime) jitterUnlock = 1;
+			if(player.isPlaying == true && phrase && phrase.firstChar.startTime == char.startTime) {
+				jitterUnlock = 1;
+			}
 
 			// If position reach char time...
 			if( char != null &&
