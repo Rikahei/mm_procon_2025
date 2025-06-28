@@ -48,7 +48,10 @@ player.addListener({
 
   onAppParameterUpdate: () => {},
 
-  onAppMediaChange() {},
+  onAppMediaChange() {
+    overlay.className = "";
+    seekbar.className = "";
+  },
 
   onVideoReady(video) {
     // Show media info
@@ -93,6 +96,11 @@ player.addListener({
     const a = document.querySelector("#control > a#play");
     while (a.firstChild) a.removeChild(a.firstChild);
     a.appendChild(document.createTextNode("\uf144"));
+  },
+
+  onSeek() {
+    // Reset text
+    refreshText()
   },
 });
 
