@@ -1,23 +1,43 @@
 import GUI from 'lil-gui';
 import { player } from './textalive-player';
+import { loadMiku } from './theMiku';
 
 export { gui };
 
 const gui = new GUI();
 const playerVolume: number = parseInt(localStorage.getItem("playerVolume") ?? "80");
 const guiParams = { 
+    "Miku's Pixels": 'Animation',
     Volume: playerVolume,
-    FullScreen: () => { document.querySelector( '#mainCanvas' )?.requestFullscreen() }
+    'Full Screen': () => { document.querySelector( '#mainCanvas' )?.requestFullscreen() }
 };
-gui.add( guiParams, 'FullScreen' );
+gui.add( guiParams, "Miku's Pixels", ['Animation', 'x1', 'x3', 'x10' ] ).onChange( 
+    (val) => {
+        switch(val) {
+            case 'x10':
+                loadMiku(3, 3);
+                break;
+            case 'x3':
+                loadMiku(2, 2);
+                break;
+            case 'x1':
+                loadMiku(1, 1);
+                break;
+            default:
+                // unlock gui lock to gif
+                loadMiku(0, -1);
+        }
+    }
+);
 // Set default player volume
 player.volume = playerVolume;
 gui.add( guiParams, 'Volume', 0, 100, 1 ).onChange( function ( value ) {
     player.volume = value;
     localStorage.setItem("playerVolume", value);
 } );
+gui.add( guiParams, 'Full Screen' );
 // Add setlist
-const folder = gui.addFolder( 'SetList' );
+const folder = gui.addFolder( 'Set List' );
 const setList = {
     'ロンリーラン': () => changeMedia(songs.song0),
     'ハロー、フェルミ': () => changeMedia(songs.song1),
@@ -33,6 +53,7 @@ gui.close();
 
 function changeMedia(songObj) {
     player.createFromSongUrl(songObj.url);
+    loadMiku(0);
 }
 
 const songs = {
