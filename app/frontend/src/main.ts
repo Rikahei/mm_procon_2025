@@ -7,16 +7,13 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import {THREE_GetGifTexture} from "threejs-gif-texture";
 import { gui } from "./lilGui";
+import { theMiku, mikuMaterial, loadMiku } from "./theMiku";
 import { skyObjects, skySystem } from "./skySystem";
 import { acceSystem } from './acceSystem';
 import { textGroup, textSystem, loadFont, createText, 
 	textPositionHelper, charLengthHelper, refreshText } from "./textSystem";
 import EarthModel from '../public/models/earth_sphere.glb';
-import MikuM11 from "../public/images/M11.gif";
-import MikuM3 from "../public/images/M3.gif";
-import MikuW2 from "../public/images/W2.gif";
 
 async function main (){
   	// load text-alive player
@@ -47,8 +44,8 @@ async function main (){
 	scene.add( acceSystem );
 	scene.add( textSystem );
 
-	let earth, theMiku, songName, artistName, char, phrase, lastPhrase, charTemp, charFix = undefined;
-	let lastCharStartTime, playerPosition, jitterUnlock, meshControl, charIndex, mikuSinging, screenRatio = 0;
+	let earth, songName, artistName, char, phrase, lastPhrase, charTemp, charFix = undefined;
+	let lastCharStartTime, playerPosition, jitterUnlock, meshControl, charIndex, screenRatio = 0;
 
 	// Load earth
 	const modelLoader = new GLTFLoader();
@@ -93,26 +90,6 @@ async function main (){
 		}
 	}
 	document.addEventListener( 'pointerdown', onPointerDown );
-
-	// Load Miku
-	let mikuMaterial = new THREE.MeshBasicMaterial({
-		transparent: true,
-		opacity: 1,
-	});
-	theMiku = new THREE.Mesh(new THREE.PlaneGeometry(18, 18), mikuMaterial);
-	theMiku.position.z = 20;
-	theMiku.scale.set(0.6, 0.6, 0.6);
-	scene.add(theMiku)
-
-	function loadMiku(mikuStatus = 0) {
-		const mikuArr = [MikuM11, MikuM3, MikuW2];
-		THREE_GetGifTexture(mikuArr[mikuStatus]).then( texture => { 
-			texture.colorSpace = THREE.SRGBColorSpace;
-			mikuMaterial.needsUpdate = true;
-	    	mikuMaterial.map = texture;
-		});
-		mikuSinging = mikuStatus == 1 ? 1 : 0;
-	}
 
 	let textScaleIndex = 5;
 
@@ -350,17 +327,17 @@ async function main (){
 			if( player.isPlaying == false && playerPosition < 1){
 				jitterUnlock = 0;
 				playBtn.visible = true;
-				if(mikuSinging) loadMiku(2);
 				if(songName && artistName) {
 					songName.layers.disable(1);
 					artistName.layers.disable(1);
+					loadMiku(3);
 				}
 				if(theMiku.position.x > 0.05 || theMiku.position.x < -0.05) {
 					mikuTimer.update();
 					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * 10;
 				}
 			} else {
-				if(!mikuSinging) loadMiku(1);
+				loadMiku(1);
 			}
 		}
 		textSystem.add(textGroup);
@@ -377,6 +354,7 @@ async function main (){
 	// load the font
 	loadFont();
 	loadMiku();
+	scene.add(theMiku);
 	requestAnimationFrame( render );
 }
 main();
