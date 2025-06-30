@@ -290,7 +290,7 @@ async function main (){
 					( screenRatio / textScaleIndex ) * 1, 1, 'songName' );
 				artistName = createText(player.data.song.artist.name, shaderMaterial, 
 					( screenRatio / textScaleIndex ) * 0.6, 1, 'artistName' );
-				songName.position.y = 17 - screenRatio;
+				songName.position.y = 18 - screenRatio;
 				artistName.position.y = 12 - screenRatio;
 				textGroup.add(songName, artistName);
 			}
