@@ -24,6 +24,8 @@ async function main (){
 	document.querySelector("#media").className = "disabled";
 	const renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true, canvas } );
 
+	const textScaleIndex = 5;
+
 	const fov = 60;
 	const aspect = 2; // the canvas default
 	const near = 0.1;
@@ -90,8 +92,6 @@ async function main (){
 		}
 	}
 	document.addEventListener( 'pointerdown', onPointerDown );
-
-	let textScaleIndex = 5;
 
 	// Set text materials
 	const shaderMaterial = new THREE.ShaderMaterial( {
@@ -196,14 +196,14 @@ async function main (){
 
 		if(theMiku && mikuMaterial.map) {
 			playBtn.position.z = 30 + Math.sin(time * 0.2);
-			theMiku.position.y = -1.5 + ( Math.sin( time * 0.5 ) * 1.5);
+			theMiku.position.y = -screenRatio + ( Math.sin( time * 0.5 ) * 1.35);
 			theMiku.rotation.y = Math.sin( time * 0.5 ) / 6;
 			// Flip miku image when arrived position
 			// Don't know why set map center in render get more smooth gif action.
-			if (theMiku.position.x > 9.9) {
+			if (theMiku.position.x > (screenRatio * textScaleIndex) - 0.05) {
 				mikuMaterial.map.center.set( 0.5, 0.5 );
     			mikuMaterial.map.repeat.set( 1, 1 );
-			} else if (theMiku.position.x < -9.9) {
+			} else if (theMiku.position.x < 1.05 - (screenRatio * textScaleIndex)) {
 				mikuMaterial.map.center.set( 0.5, 0.5 );
 				mikuMaterial.map.repeat.set( -1, 1 );
 			}
@@ -213,9 +213,9 @@ async function main (){
 				const fontZ = font.position.z;
 				// Set animation after the bloom effect of temp & fix chars
 				if ( index % 2 == 0 && ( index < textGroup.children.length - 2 || !phrase ) ) {
-					font.position.z = fontZ + (Math.sin( time * 0.7 ) / 120 );
+					font.position.z = fontZ + (Math.sin( time * 0.7 ) / 130 );
 				} else if ( index < textGroup.children.length - 2 || !phrase ) {
-					font.position.z = fontZ + (Math.cos( time * 0.7 ) / 120 );
+					font.position.z = fontZ + (Math.cos( time * 0.7 ) / 130 );
 				}
 			});
 		}
@@ -290,8 +290,8 @@ async function main (){
 					( screenRatio / textScaleIndex ) * 1, 1, 'songName' );
 				artistName = createText(player.data.song.artist.name, shaderMaterial, 
 					( screenRatio / textScaleIndex ) * 0.6, 1, 'artistName' );
-				songName.position.y = 16.5;
-				artistName.position.y = 11;
+				songName.position.y = 17 - screenRatio;
+				artistName.position.y = 12.5 - screenRatio;
 				textGroup.add(songName, artistName);
 			}
 			// Play animation
@@ -301,7 +301,7 @@ async function main (){
 					playBtn.visible = false;
 				}
 				if(theMiku && mikuMaterial.map) {
-					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * 10;
+					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * screenRatio * textScaleIndex;
 				}
 				// dim the light
 				if (frontLight.intensity < 1.8) {
@@ -334,7 +334,7 @@ async function main (){
 				}
 				if(theMiku.position.x > 0.05 || theMiku.position.x < -0.05) {
 					mikuTimer.update();
-					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * 10;
+					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * screenRatio * textScaleIndex;
 				}
 			} else {
 				loadMiku(1);
