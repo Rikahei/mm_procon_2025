@@ -291,7 +291,7 @@ async function main (){
 				artistName = createText(player.data.song.artist.name, shaderMaterial, 
 					( screenRatio / textScaleIndex ) * 0.6, 1, 'artistName' );
 				songName.position.y = 17 - screenRatio;
-				artistName.position.y = 12.5 - screenRatio;
+				artistName.position.y = 12 - screenRatio;
 				textGroup.add(songName, artistName);
 			}
 			// Play animation
