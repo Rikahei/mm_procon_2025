@@ -7,11 +7,11 @@ export { gui };
 const gui = new GUI();
 const playerVolume: number = parseInt(localStorage.getItem("playerVolume") ?? "80");
 const guiParams = { 
-    "Miku's Pixels": 'Animation',
+    "Miku's Pixel Art Level": 'Animation',
     Volume: playerVolume,
     'Full Screen': () => { document.querySelector( '#mainCanvas' )?.requestFullscreen() }
 };
-gui.add( guiParams, "Miku's Pixels", ['Animation', 'x1', 'x3', 'x10' ] ).onChange( 
+gui.add( guiParams, "Miku's Pixel Art Level", ['Animation', 'x1', 'x3', 'x10' ] ).onChange( 
     (val) => {
         switch(val) {
             case 'x10':
