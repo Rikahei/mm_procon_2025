@@ -1,25 +1,32 @@
 # Magical Universe - 初音ミク「マジカルミライ 2025」』プログラミング・コンテスト応募作品
 
+- Demo page at [GitHub Pages](https://rikahei.github.io/mm_procon_2025/)
+
+- Recommend aspect-ratio: 16:9, 21:9
+
 ![Image](https://github.com/user-attachments/assets/e80a4c4e-cf6d-477a-846b-bfa7d3760332)
 
 ## Development environment
 
-### Docker
-> docker-compose up --build
+### Docker local environment
+```
+docker compose up --build
+```
 
-### NPM
-To install packages
+### Run with NPM (no docker)
 
-> npm install
+To install packages & run development environment
 
-To run development environment
-
-> npm run dev -- --host
+```
+cd app/frontend
+npm install
+npm run dev -- --host
+```
 
 To build production
-
-> npm run build
-
+```
+npm run build
+```
 ## TextAlive App API
 
 ![TextAlive](https://i.gyazo.com/thumb/1000/5301e6f642d255c5cfff98e049b6d1f3-png.png)
