@@ -7,11 +7,12 @@ export { gui };
 const gui = new GUI();
 const playerVolume: number = parseInt(localStorage.getItem("playerVolume") ?? "80");
 const guiParams = { 
-    "Miku's Pixels": 'Animation',
+    "Miku's Pixel Art Level": 'Animation',
     Volume: playerVolume,
     'Full Screen': () => { document.querySelector( '#mainCanvas' )?.requestFullscreen() }
 };
-gui.add( guiParams, "Miku's Pixels", ['Animation', 'x1', 'x3', 'x10' ] ).onChange( 
+const appFolder = gui.addFolder( 'App Controls' );
+appFolder.add( guiParams, "Miku's Pixel Art Level", ['Animation', 'x1', 'x3', 'x10' ] ).onChange( 
     (val) => {
         switch(val) {
             case 'x10':
@@ -31,24 +32,26 @@ gui.add( guiParams, "Miku's Pixels", ['Animation', 'x1', 'x3', 'x10' ] ).onChang
 );
 // Set default player volume
 player.volume = playerVolume;
-gui.add( guiParams, 'Volume', 0, 100, 1 ).onChange( function ( value ) {
+appFolder.add( guiParams, 'Volume', 0, 100, 1 ).onChange( function ( value ) {
     player.volume = value;
     localStorage.setItem("playerVolume", value);
 } );
-gui.add( guiParams, 'Full Screen' );
+const visualFolder = gui.addFolder( 'Visual' );
+visualFolder.add( guiParams, 'Full Screen' );
+
 // Add setlist
-const folder = gui.addFolder( 'Set List' );
+const setListFolder = gui.addFolder( 'TextAlive Setlist' );
 const setList = {
-    'ロンリーラン': () => changeMedia(songs.song0),
-    'ハロー、フェルミ': () => changeMedia(songs.song1),
-    'インフォーマルダイブ': () => changeMedia(songs.song2),
-    'アリフレーション': () => changeMedia(songs.song3)
+    'ロンリーラン - 海風太陽': () => changeMedia(songs.song0),
+    'ハロー、フェルミ - ど～ぱみん': () => changeMedia(songs.song1),
+    'インフォーマルダイブ - r99piano': () => changeMedia(songs.song2),
+    'アリフレーション - 雨良 Amala': () => changeMedia(songs.song3)
 };
-folder.add(setList, 'ロンリーラン');
-folder.add(setList, 'ハロー、フェルミ');
-folder.add(setList, 'インフォーマルダイブ');
-folder.add(setList, 'アリフレーション');
-gui.title( 'TextAlive controls' );
+setListFolder.add(setList, 'アリフレーション - 雨良 Amala');
+setListFolder.add(setList, 'インフォーマルダイブ - r99piano');
+setListFolder.add(setList, 'ハロー、フェルミ - ど～ぱみん');
+setListFolder.add(setList, 'ロンリーラン - 海風太陽');
+gui.title( 'TextAlive Controls' );
 gui.close();
 
 function changeMedia(songObj) {
@@ -65,7 +68,7 @@ const songs = {
             chordId: 2830735,
             repetitiveSegmentId: 2946483,
             lyricId: 67815,
-            lyricDiffId: 20659
+            lyricDiffId: 22065
         }
     },
     // ハロー、フェルミ
@@ -89,7 +92,7 @@ const songs = {
         url: 'https://piapro.jp/t/SuQO/20250127235813',
         video: {
             lyricId: 67811,
-            lyricDiffId: 22500
+            lyricDiffId: 22525
         }
     }
 }

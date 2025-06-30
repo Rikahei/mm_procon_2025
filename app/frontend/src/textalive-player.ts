@@ -40,7 +40,7 @@ player.addListener({
           // 歌詞URL: https://piapro.jp/t/DPXV
           // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FULcJ%2F20250205120202
           lyricId: 67815,
-          lyricDiffId: 20659
+          lyricDiffId: 22065
         },
       });
     }

@@ -115,7 +115,7 @@ function speechColorHelper (speech, isFix = 1) {
         case speech == 'V' && isFix == 0:
             return { h: mikoKaitoColor[Math.floor(Math.random() * 2)], s: 0.35 + Math.random(), l: 0.35 + Math.random() * 0.1};
         default:
-            return { h: Math.random(), s: 0.35 + Math.random(), l: 0.5 + Math.random()};
+            return { h: Math.random(), s: 0.35 + Math.random(), l: 0.52 + Math.random()};
     }
 }
 
