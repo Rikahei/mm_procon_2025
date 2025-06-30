@@ -1,6 +1,6 @@
 # Magical Universe - 初音ミク「マジカルミライ 2025」』プログラミング・コンテスト応募作品
 
-
+![Image](https://github.com/user-attachments/assets/e80a4c4e-cf6d-477a-846b-bfa7d3760332)
 
 ## Development environment
 
