@@ -306,6 +306,7 @@ async function main (){
 					playBtn.visible = false;
 				}
 				if(theMiku && mikuMaterial.map) {
+					loadMiku(1);
 					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * screenRatio * textScaleIndex;
 				}
 				// dim the light
@@ -316,8 +317,30 @@ async function main (){
 					frontLightY += 0.02;
 					frontLight.position.set( 0, frontLightY, 20 );
 				}
+			// When isPlaying is false
 			} else {
 				playBtn.visible = true;
+				// Song is ended
+				if (playerPosition < 1) {
+					jitterUnlock = 0;
+					if(songName && artistName) {
+						songName.layers.disable(1);
+						artistName.layers.disable(1);
+						loadMiku(3);
+					}
+					// Let miku move to center when song is ended
+					if(theMiku.position.x > 0.05 || theMiku.position.x < -0.05) {
+						mikuTimer.update();
+						theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * screenRatio * textScaleIndex;
+					}
+				} else {
+					// Song is pause
+					loadMiku(0);
+				}
+				// if player is paused and intensity bigger than 0.5, dim the light
+				if (frontLight.intensity > 0.5) {
+					frontLight.intensity -= 0.03;
+				}
 			}
 			// Dim light at ending
 			if(player.isPlaying == true && 
@@ -329,21 +352,6 @@ async function main (){
 						frontLightY -= 0.2;
 						frontLight.position.set(0, frontLightY, 20);
 					}
-			}
-			// Miku changes
-			if( player.isPlaying == false && playerPosition < 1){
-				jitterUnlock = 0;
-				if(songName && artistName) {
-					songName.layers.disable(1);
-					artistName.layers.disable(1);
-					loadMiku(3);
-				}
-				if(theMiku.position.x > 0.05 || theMiku.position.x < -0.05) {
-					mikuTimer.update();
-					theMiku.position.x = Math.sin( mikuTimer.getElapsed() * 0.2 ) * screenRatio * textScaleIndex;
-				}
-			} else {
-				loadMiku(1);
 			}
 		}
 		textSystem.add(textGroup);
