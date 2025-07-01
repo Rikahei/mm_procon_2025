@@ -86,8 +86,13 @@ async function main (){
 		for ( let i = 0; i < intersects.length; i ++ ) {
 			if(intersects[i].object.name == 'playBtn' || intersects[i].object.parent.name == 'Earth') {
 				if( player.isLoading ) return;
-				playBtn.visible = false;
-				player.requestPlay();
+				if( player.isPlaying == true ){
+					player.requestPause();
+				} else {
+					player.requestPlay();
+				}
+				// Avoid multiple clicks
+				return;
 			}
 		}
 	}
@@ -311,6 +316,8 @@ async function main (){
 					frontLightY += 0.02;
 					frontLight.position.set( 0, frontLightY, 20 );
 				}
+			} else {
+				playBtn.visible = true;
 			}
 			// Dim light at ending
 			if(player.isPlaying == true && 
@@ -326,7 +333,6 @@ async function main (){
 			// Miku changes
 			if( player.isPlaying == false && playerPosition < 1){
 				jitterUnlock = 0;
-				playBtn.visible = true;
 				if(songName && artistName) {
 					songName.layers.disable(1);
 					artistName.layers.disable(1);

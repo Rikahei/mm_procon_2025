@@ -58,24 +58,26 @@ player.addListener({
     document.querySelector("#artist span").textContent = player.data.song.artist.name;
     document.querySelector("#song span").textContent = player.data.song.name;
 
-    // reset last time
+    // Reset last time
     lastTime = -1;
+    // Reset seekbar position
+    setSeekBarPosition(lastTime);
 
     // Reset text
     refreshText()
+
+    mikuTimer.disconnect();
+    mikuTimer.reset();
   },
 
   onTimerReady() {
     overlay.className = "disabled";
     document.querySelector("#control > a#play").className = "";
-    document.querySelector("#control > a#stop").className = "";
   },
 
   onTimeUpdate(position) {
     // update seekbar
-    paintedSeekbar.style.width = `${
-      parseInt((position * 1000) / player.video.duration) / 10
-    }%`;
+    setSeekBarPosition(position);
     // End when video has no firstChar
     if (!player.video.firstChar) {
       return;
@@ -89,7 +91,7 @@ player.addListener({
     while (a.firstChild) a.removeChild(a.firstChild);
     a.appendChild(document.createTextNode("\uf28b"));
     mikuTimer.connect( document );
-    mikuTimer.reset()
+    mikuTimer.reset();
   },
 
   onPause() {
@@ -117,16 +119,6 @@ document.querySelector("#control > a#play").addEventListener("click", (e) => {
   return false;
 });
 
-// Stop button
-document.querySelector("#control > a#stop").addEventListener("click", (e) => {
-  e.preventDefault();
-  if (player) {
-    player.requestStop();
-    mikuTimer.disconnect()
-  }
-  return false;
-});
-
 /* シークバー */
 seekbar.addEventListener("click", (e) => {
   e.preventDefault();
@@ -137,3 +129,10 @@ seekbar.addEventListener("click", (e) => {
   }
   return false;
 });
+
+function setSeekBarPosition(position) {
+  if(!paintedSeekbar || !player.video.duration) return;
+  paintedSeekbar.style.width = `${
+    parseInt((position * 1000) / player.video.duration) / 10
+  }%`;
+}
