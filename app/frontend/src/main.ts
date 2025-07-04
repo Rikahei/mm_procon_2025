@@ -181,13 +181,7 @@ async function main (){
 	}
 
 	// Rendering
-	function render( time ) {
-		const canvas = renderer.domElement;
-		time *= 0.001;
-		if ( resizeRendererToDisplaySize( renderer ) ) {
-			camera.aspect = canvas.clientWidth / canvas.clientHeight;
-			camera.updateProjectionMatrix();
-		}
+	function animation( time ) {
 		// earth rotations
 		if(earth){
 			earth.rotation.x = time * 0.01;
@@ -362,7 +356,22 @@ async function main (){
 		renderer.setClearColor( 0x000005 );
 		scene.traverse( restoreMaterial );
 		finalComposer.render();
+	}
 
+	let lastFrameTime = 0;
+	function render( time ) {
+		if ( resizeRendererToDisplaySize( renderer ) ) {
+			const canvas = renderer.domElement;
+			camera.aspect = canvas.clientWidth / canvas.clientHeight;
+			camera.updateProjectionMatrix();
+		}
+		const delta = performance.now() - lastFrameTime;
+		// limit Fps to 61
+		if (16.4 < delta) {
+			lastFrameTime = performance.now();
+			time *= 0.001;
+			animation(time);
+		}
 		requestAnimationFrame( render );
 	}
 	// load the font
