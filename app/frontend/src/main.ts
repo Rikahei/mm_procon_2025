@@ -349,13 +349,6 @@ async function main (){
 			}
 		}
 		textSystem.add(textGroup);
-		// Blooming filter
-		scene.traverse( darkenNonBloomed );
-		renderer.setClearColor( 0x000000 );
-		bloomComposer.render();
-		renderer.setClearColor( 0x000005 );
-		scene.traverse( restoreMaterial );
-		finalComposer.render();
 	}
 
 	let lastFrameTime = 0;
@@ -370,8 +363,16 @@ async function main (){
 		if (16.4 < delta) {
 			lastFrameTime = performance.now();
 			time *= 0.001;
+			// Run animation
 			animation(time);
 		}
+		// Blooming filter
+		scene.traverse( darkenNonBloomed );
+		renderer.setClearColor( 0x000000 );
+		bloomComposer.render();
+		renderer.setClearColor( 0x000005 );
+		scene.traverse( restoreMaterial );
+		finalComposer.render();
 		requestAnimationFrame( render );
 	}
 	// load the font
