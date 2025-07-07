@@ -6,18 +6,25 @@ Magical Universeは、音楽と光を演出するWEBアプリケーションで�
 
 Magical Universe - A music and lighting performance web application powered by TextAlive. Combines lyrics, light effects and illustrations to build an immersive 3D universe experience.
 
-Set your screen horizontally, `tap` the `Earth` :earth_asia:, Enjoy!
+Set your screen horizontally, `tap` the `Earth` :earth_asia: and enjoy!
+
+デモページ / Demo page: [GitHub Pages](https://rikahei.github.io/mm_procon_2025/)
 
 ### Keypoints
-
-- デモページ / Demo page: [GitHub Pages](https://rikahei.github.io/mm_procon_2025/)
-- 推奨画面アスペクト比 / Recommended screen aspect-ratio: `16:9` `21:9`
-- 設定は、画面右上の「コントロールボックス」で変更できます / Settings can be changed in the "Controls Box" at the top right of the screen: 
- `楽曲、イラスト、全画面 & 音量 / Tracks, illustrations, Full screen & Volume`
+- 推奨環境： Chrome ブラウザ(PC版) / Recommended environment: Google Chrome (PC version)
+  - 高解像度推奨 / Recommended high-resolution : `4k`, `1440p`, `1080p` etc.
+  - 推奨画面アスペクト比 / Recommended screen aspect-ratio: `16:9`, `21:9`
+  - スマートフォン・タブレット対応 / Mobile & tablet support
+- 『初音ミク「マジカルミライ 2025」楽曲コンテスト』4楽曲に対応 / Supports 4 tracks from "Hatsune Miku “Magical Mirai 2025” Song Contest" :cd:
+  - [TextAlive App Customizer](https://developer.textalive.jp/app/run/?ta_app_url=https%3A%2F%2Frikahei.github.io%2Fmm_procon_2025%2F)で別の楽曲も動作可能 / Other tracks can be played using TextAlive App Customizer.
+- `イラスト`、`全画面` & `音量` は画面右上の「コントロールボックス」で変更可能 / `illustrations`, `Full screen` & `Volume` can be changed via the "Controls Box" at the top right of the screen.
+- 開演時の`地球`における光線の変化 / Light transitions on `Earth` at the start :sunny:
+- 3D文字の構成色と光エフェクトの演出 / Visual effects of light on 3D text color combinations :fireworks:
+- 初音ミクのイラストの動作 / Hatsune Miku's illustration animation
 
 ![ezgif-6f1f5cebcc3197](https://github.com/user-attachments/assets/f85d5642-b243-469d-ad96-f60e2619c125)
 
-### Creators team
+### Our team
 
 - Program & Model by <ins>Aless Li</ins>
 - Illustrations & Models by <ins>Yohki</ins>
@@ -66,7 +73,7 @@ For more details on the TextAlive App API, please visit the website [TextAlive f
 
 >axios (MIT)
 >
->textalive-app-api (Read the license permission & condition at [TextAlive.jp](https://textalive.jp/) )
+>textalive-app-api (Read the license permissions & conditions at [TextAlive.jp](https://textalive.jp/) )
 >
 >three.js (MIT)
 >
@@ -80,4 +87,8 @@ For more details on the TextAlive App API, please visit the website [TextAlive f
 
 ## Font
 
-From [DotGothic16](https://fonts.google.com/specimen/DotGothic16/license?lang=ja_Jpan) (SIL Open Font License (OFL) version 1.1), converted to typeface.json format for textloader in three.js.
+- [DotGothic16](https://fonts.google.com/specimen/DotGothic16/license?lang=ja_Jpan) (SIL Open Font License (OFL) version 1.1), converted to typeface.json format for textloader in three.js.
+
+- [Shippori Mincho B1](https://fonts.google.com/specimen/Shippori+Mincho+B1) (SIL Open Font License (OFL) version 1.1)
+
+- [font-awesome](https://fontawesome.com/v4/license/) (SIL Open Font License (OFL) version 1.1)
