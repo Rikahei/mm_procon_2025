@@ -25,7 +25,7 @@ function loadMiku(mikuStatus = 0, guiRequest = 0) {
     if(guiRequest > 0 || guiRequest == -1) guiLocked = 0;
     if(lastStatus == mikuStatus || guiLocked > 0) return;
 	const mikuArr = [MikuM11, MikuM3, MikuA2, MikuW2];
-	THREE_GetGifTexture(mikuArr[mikuStatus]).then( texture => { 
+	THREE_GetGifTexture(mikuArr[mikuStatus]).then( (texture: { colorSpace: any; }) => { 
 		texture.colorSpace = THREE.SRGBColorSpace;
 		mikuMaterial.needsUpdate = true;
     	mikuMaterial.map = texture;

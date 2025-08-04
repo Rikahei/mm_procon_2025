@@ -18,8 +18,8 @@ acceObjects.push( acceSystem );
 
 // load models
 const loader = new GLTFLoader();
-function loadStarModels(file) {
-    loader.load( file, function ( gltf ) {
+function loadStarModels(file: object) {
+    loader.load( file, function ( gltf: any) {
         const desiredScale = 1 + Math.random() * 1.5;
         for (let i = 0; i < 6; i++) {
             const starClone = gltf.scene.clone();
@@ -31,7 +31,7 @@ function loadStarModels(file) {
             acceSystem.add( starClone );
             acceObjects.push( starClone );
         }
-    }, undefined, function ( error ) {
+    }, undefined, function ( error: unknown ) {
         console.error( error );
     });
 }
