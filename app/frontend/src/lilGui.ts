@@ -5,7 +5,7 @@ import { loadMiku } from './theMiku';
 export { gui };
 
 const gui = new GUI();
-const playerVolume: number = parseInt(localStorage.getItem("playerVolume") ?? "80");
+const playerVolume: string = parseInt(localStorage.getItem("playerVolume") ?? "80");
 const guiParams = { 
     "Miku's Pixel Art Level": 'Animation',
     Volume: playerVolume,
@@ -13,7 +13,7 @@ const guiParams = {
 };
 const appFolder = gui.addFolder( 'App Controls' );
 appFolder.add( guiParams, "Miku's Pixel Art Level", ['Animation', 'x1', 'x3', 'x10' ] ).onChange( 
-    (val) => {
+    (val: string) => {
         switch(val) {
             case 'x10':
                 loadMiku(3, 3);
@@ -31,9 +31,9 @@ appFolder.add( guiParams, "Miku's Pixel Art Level", ['Animation', 'x1', 'x3', 'x
     }
 );
 // Set default player volume
-player.volume = playerVolume;
-appFolder.add( guiParams, 'Volume', 0, 100, 1 ).onChange( function ( value ) {
-    player.volume = value;
+player.volume = parseInt(playerVolume);
+appFolder.add( guiParams, 'Volume', 0, 100, 1 ).onChange( function ( value: string ) {
+    player.volume = parseInt(value);
     localStorage.setItem("playerVolume", value);
 } );
 const visualFolder = gui.addFolder( 'Visual' );
@@ -54,9 +54,20 @@ setListFolder.add(setList, 'ロンリーラン - 海風太陽');
 gui.title( 'TextAlive Controls' );
 gui.close();
 
-function changeMedia(songObj) {
+function changeMedia(songObj: SongInfo) {
     player.createFromSongUrl(songObj.url);
     loadMiku(0);
+}
+
+interface SongInfo {
+    url: string;
+    video: {
+        beatId?: number;
+        chordId?: number;
+        repetitiveSegmentId?: number;
+        lyricId?: number;
+        lyricDiffId?: number;
+    };
 }
 
 const songs = {

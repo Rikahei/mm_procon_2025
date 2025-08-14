@@ -7,23 +7,22 @@ import { TessellateModifier } from 'three/addons/modifiers/TessellateModifier.js
 export { textSystem, textGroup, loadFont, createText, textPositionHelper, charLengthHelper, refreshText};
 
 const zodiacObjects = [];
-let font, mestText;
+let font: any, mestText: any;
 
 const textGroup = new THREE.Group();
 const textSystem = new THREE.Object3D();
 zodiacObjects.push( textSystem );
 
 const loader = new FontLoader();
-let message = 'マジカルミライ２０２５';
 
 function loadFont() {
-    loader.load(DotGothic16, function ( response ) {
+    loader.load(DotGothic16, function ( response: any ) {
         font = response;
-        refreshText(message);
+        refreshText();
     } );
 }
 
-function createText (text, textMaterial, fontScale = 0.1, isFix = 1, speech = null) {
+function createText (text: string, textMaterial: any, fontScale = 0.1, isFix = 1, speech = null) {
     const props = {
       font,
       size: 10,
@@ -72,7 +71,7 @@ function createText (text, textMaterial, fontScale = 0.1, isFix = 1, speech = nu
     return mestText;
 }
 
-function textPositionHelper (char, charIndex, charCount, deg = 8) {
+function textPositionHelper (char: { position: { x: number; y: number; }; rotation: { z: number; }; }, charIndex: number, charCount: number, deg = 8) {
     const radius = 45
     const degreesToRads = ( ( (charIndex * deg) - ( ( (charCount - 1) * deg) / 2) ) * Math.PI ) / 180;
     let x = radius * Math.sin(degreesToRads);
@@ -82,7 +81,7 @@ function textPositionHelper (char, charIndex, charCount, deg = 8) {
     char.rotation.z = -degreesToRads;
 }
 
-function charLengthHelper (charCount) {
+function charLengthHelper (charCount: number) {
     switch (charCount != undefined && charCount > 0) {
         case (charCount > 23):
             return 0.65;
@@ -97,7 +96,7 @@ function charLengthHelper (charCount) {
     }
 }
 
-function speechColorHelper (speech, isFix = 1) {
+function speechColorHelper (speech: string | null, isFix = 1) {
     const mikuColor = [0.8, 0.48];
     const rinLenColor = [0.05, 0.18];
     const mikoKaitoColor = [0, 0.65];
