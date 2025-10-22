@@ -22,6 +22,8 @@ Set your screen horizontally, `tap` the `Earth` :earth_asia: and enjoy!
 - 3D文字の構成色と光エフェクトの演出 / Visual effects of light on 3D text color combinations :fireworks:
 - 初音ミクのイラストの動作 / Hatsune Miku's illustration animation
 
+<img width="371" height="215" alt="Screenshot 2025-10-22 at 16 10 16" src="https://github.com/user-attachments/assets/8a5bfbaa-7293-4c8f-ba6d-e987b41e7cd2" />
+
 ![ezgif-6f1f5cebcc3197](https://github.com/user-attachments/assets/f85d5642-b243-469d-ad96-f60e2619c125)
 
 ### Our team
